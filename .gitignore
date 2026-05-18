@@ -1,0 +1,12 @@
+client_secret.json
+.env
+venv/
+node_modules/
+__pycache__/
+*.pyc
+db.sqlite3
+Google OAuth Client ID 
+Google OAuth Client Secret
+client_secret*.json
+credentials.json
+token.json

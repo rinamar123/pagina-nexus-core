@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nexus Core | Panel de Control IA</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2103/2103633.png">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--dark-bg); margin: 0; display: flex; color: white; min-height: 100vh; overflow-x: hidden; }
+        
+        .sidebar { width: 280px; background: rgba(255,255,255,0.01); border-right: 1px solid rgba(255,255,255,0.05); padding: 3rem 1.5rem; position: sticky; top: 0; height: 100vh; }
+        .main { flex: 1; padding: 3rem; background-image: radial-gradient(circle at 0% 0%, rgba(0, 242, 255, 0.05) 0%, transparent 50%); }
+        
+        h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; margin-bottom: 2rem; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 4rem; }
+        .stat-card { background: var(--glass); padding: 2rem; border-radius: 1.5rem; border: 1px solid rgba(255,255,255,0.05); }
+        .stat-card h3 { margin: 0; color: rgba(255,255,255,0.5); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; }
+        .stat-card p { margin: 0.5rem 0 0; font-size: 2.5rem; font-weight: 700; color: var(--neon-blue); font-family: 'Space Grotesk', sans-serif; }
+        
+        .section-box { margin-bottom: 4rem; }
+        h2 { font-family: 'Space Grotesk', sans-serif; margin-bottom: 1.5rem; color: var(--neon-purple); font-size: 1.4rem; }
+
+        /* Filter Section */
+        .filter-bar {
+            background: var(--glass);
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .filter-bar select {
+            background: white;
+            color: black;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 0.6rem 1rem;
+            border-radius: 0.8rem;
+            outline: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .filter-bar select option {
+            background: white;
+            color: black;
+        }
+
+        /* Tables */
+        .table-container { background: var(--glass); border-radius: 1.5rem; overflow-x: auto; max-width: 100%; border: 1px solid rgba(255,255,255,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1.2rem 1.5rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th { background: rgba(255,255,255,0.02); color: var(--neon-blue); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .badge { padding: 0.3rem 0.8rem; border-radius: 2rem; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; border: 1px solid transparent; }
+        .badge-pending { color: #ffc107; border-color: #ffc107; background: rgba(255,193,7,0.1); }
+        .badge-accepted { color: #00ff80; border-color: #00ff80; background: rgba(0,255,128,0.1); }
+        .badge-rejected { color: #ff4d4d; border-color: #ff4d4d; background: rgba(255,77,77,0.1); }
+        .badge-suspended { color: #ff9800; border-color: #ff9800; background: rgba(255,152,0,0.1); }
+
+        .btn-action { padding: 0.5rem 1rem; border-radius: 0.8rem; text-decoration: none; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; transition: 0.3s; }
+        .btn-accept { background: var(--neon-blue); color: var(--dark-bg); }
+        .btn-reject { background: transparent; border: 1px solid #ff4d4d; color: #ff4d4d; margin-left: 0.5rem; }
+        
+        .course-tag { font-size: 0.7rem; background: rgba(0, 242, 255, 0.1); color: var(--neon-blue); padding: 0.2rem 0.6rem; border-radius: 0.5rem; margin-right: 0.3rem; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <h2 style="color: var(--neon-blue); margin-bottom: 3rem;">NEXUS CORE</h2>
+        <nav style="display: flex; flex-direction: column; gap: 1rem;">
+            <a href="{% url 'admin_dashboard' %}" style="color: white; text-decoration: none; font-weight: 600; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 1rem;">Dashboard</a>
+            <a href="{% url 'admin_grade_assignments' %}" style="color: var(--neon-blue); text-decoration: none; font-weight: 600; padding: 1rem; border: 1px solid var(--neon-blue); border-radius: 1rem; font-size: 0.8rem; text-align: center; margin-top: 1rem;">📝 CALIFICAR ENTREGAS</a>
+            <a href="{% url 'admin_logout' %}" style="margin-top: auto; color: #ff4d4d; text-decoration: none; font-weight: 700; font-size: 0.8rem; padding: 1rem;">DESCONECTAR</a>
+        </nav>
+    </div>
+
+    <div class="main">
+        <h1>Centro de Comando IA</h1>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Sujetos en Red</h3>
+                <p>{{ students_count }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Peticiones Pendientes</h3>
+                <p>{{ pending_count }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Nodos Activos</h3>
+                <p>{{ courses_count }}</p>
+            </div>
+        </div>
+
+        <!-- Nueva Sección de Analítica -->
+        <div class="section-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 4rem;">
+            <div class="stat-card">
+                <h3>Distribución de Estudiantes por Nodo</h3>
+                <canvas id="studentsChart" style="max-height: 250px; margin-top: 1rem;"></canvas>
+            </div>
+            <div class="stat-card">
+                <h3>Rendimiento Promedio (Escala 1-5)</h3>
+                <canvas id="performanceChart" style="max-height: 250px; margin-top: 1rem;"></canvas>
+            </div>
+        </div>
+
+        <div class="section-box">
+            <h2>Peticiones Entrantes</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Algoritmo Solicitado</th>
+                            <th>Nivel</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in pending_requests %}
+                        <tr>
+                            <td>{{ req.student.name }} <br><small style="color:rgba(255,255,255,0.4)">{{ req.student.email }}</small></td>
+                            <td style="color: var(--neon-blue); font-weight: 600;">{{ req.course.title }}</td>
+                            <td><span class="badge badge-pending">{{ req.student.get_level_display }}</span></td>
+                            <td>
+                                <a href="{% url 'enrollment_accept' req.pk %}" class="btn-action btn-accept">Autorizar</a>
+                                <a href="{% url 'enrollment_reject' req.pk %}" class="btn-action btn-reject">Denegar</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.2);">Sin peticiones en espera.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Two-Column Student Management Grid -->
+        <div style="display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 2rem; align-items: start; margin-top: 2rem;">
+            <!-- Left Column: Student List Table -->
+            <div class="section-box" style="margin: 0;">
+                <h2>Lista General de Unidades (Estudiantes)</h2>
+                
+                <form method="GET" class="filter-bar">
+                    <span style="font-size: 0.8rem; color: rgba(255,255,255,0.5); text-transform: uppercase;">Filtrar por Nodo:</span>
+                    <select name="course" onchange="this.form.submit()">
+                        <option value="">-- Todos los Nodos --</option>
+                        {% for course in courses %}
+                        <option value="{{ course.id }}" {% if selected_course == course.id %}selected{% endif %}>{{ course.title }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if selected_course %}
+                    <a href="{% url 'admin_dashboard' %}" style="color: var(--neon-purple); font-size: 0.8rem; text-decoration: none;">Limpiar Filtro</a>
+                    {% endif %}
+                </form>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Identidad</th>
+                                <th>Email</th>
+                                <th>Nivel</th>
+                                <th>Estado</th>
+                                <th>Cursos Sincronizados</th>
+                                <th style="text-align: center;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                            <tr>
+                                <td style="font-weight: 600;">
+                                    {{ student.name }}
+                                    {% if student.generated_password %}
+                                        <br><small style="color: var(--neon-blue); font-size: 0.75rem;">🔑 Clave inicial: <code>{{ student.generated_password }}</code></small>
+                                    {% endif %}
+                                </td>
+                                <td style="color: rgba(255,255,255,0.5);">{{ student.email }}</td>
+                                <td><span class="badge" style="color: var(--neon-purple); border-color: var(--neon-purple); background: rgba(188, 19, 254, 0.1);">{{ student.get_level_display }}</span></td>
+                                <td>
+                                    {% if student.status == 'accepted' %}
+                                        <span class="badge badge-accepted">Aceptado</span>
+                                    {% elif student.status == 'pending' %}
+                                        <span class="badge badge-pending">Pendiente</span>
+                                    {% elif student.status == 'suspended' %}
+                                        <span class="badge badge-suspended">Suspendido</span>
+                                    {% else %}
+                                        <span class="badge badge-rejected">Rechazado</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% for c in student.courses.all %}
+                                    <span class="course-tag">{{ c.title }}</span>
+                                    {% endfor %}
+                                </td>
+                                <td style="text-align: center;">
+                                    <div style="display: inline-flex; gap: 1rem; align-items: center; justify-content: center;">
+                                        <a href="{% url 'student_edit' student.id %}" style="color: var(--neon-blue); text-decoration: none; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;" onmouseover="this.style.textShadow='0 0 8px var(--neon-blue)'" onmouseout="this.style.textShadow='none'">Editar</a>
+                                        
+                                        <form action="{% url 'student_delete' student.id %}" method="POST" style="display: inline; margin: 0;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar permanentemente a {{ student.name }} y su cuenta de acceso? Esta acción no se puede deshacer.');">
+                                            {% csrf_token %}
+                                            <button type="submit" style="background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 0; font-family: inherit; transition: 0.3s;" onmouseover="this.style.textShadow='0 0 8px #ff4d4d'" onmouseout="this.style.textShadow='none'">Borrar</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="6" style="text-align: center; padding: 4rem; color: rgba(255,255,255,0.2);">No se detectan unidades sincronizadas en este nodo.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Right Column: Recently Modified Box -->
+            <div class="section-box" style="margin: 0; border-color: rgba(188, 19, 254, 0.15); background-image: radial-gradient(circle at 100% 100%, rgba(188, 19, 254, 0.04) 0%, transparent 100%);">
+                <h2 style="color: var(--neon-purple); font-size: 1.15rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>⚡</span> MODIFICADOS RECIENTE
+                </h2>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    {% for r_student in recently_modified %}
+                    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--glass-border); padding: 1.1rem; border-radius: 1rem; display: flex; flex-direction: column; gap: 0.4rem; transition: 0.3s;" onmouseover="this.style.borderColor='var(--neon-purple)'; this.style.background='rgba(188,19,254,0.03)'" onmouseout="this.style.borderColor='var(--glass-border)'; this.style.background='rgba(255,255,255,0.01)'">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
+                            <strong style="font-size: 0.85rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">{{ r_student.name }}</strong>
+                            <a href="{% url 'student_edit' r_student.id %}" style="font-size: 0.65rem; color: var(--neon-blue); text-decoration: none; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">⚙️ Editar</a>
+                        </div>
+                        <span style="font-size: 0.7rem; color: rgba(255,255,255,0.4); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ r_student.email }}</span>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.3rem; border-top: 1px dashed rgba(255,255,255,0.05); padding-top: 0.5rem;">
+                            <span style="font-size: 0.65rem; color: var(--neon-purple); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">{{ r_student.get_level_display }}</span>
+                            <span style="font-size: 0.6rem; color: rgba(255,255,255,0.3);">Act. {{ r_student.updated_at|timesince }} ago</span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p style="font-size: 0.75rem; color: rgba(255,255,255,0.3); text-align: center; padding: 2rem 0;">Sin modificaciones recientes.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ctxStudents = document.getElementById('studentsChart');
+        new Chart(ctxStudents, {
+            type: 'pie',
+            data: {
+                labels: [{% for m in course_metrics %}'{{ m.title }}',{% endfor %}],
+                datasets: [{
+                    data: [{% for m in course_metrics %}{{ m.students }},{% endfor %}],
+                    backgroundColor: ['#00f2ff', '#bc13fe', '#00ff80'],
+                    borderWidth: 0
+                }]
+            },
+            options: { plugins: { legend: { labels: { color: 'white' } } } }
+        });
+
+        const ctxPerf = document.getElementById('performanceChart');
+        new Chart(ctxPerf, {
+            type: 'bar',
+            data: {
+                labels: [{% for m in course_metrics %}'{{ m.title|truncatechars:10 }}',{% endfor %}],
+                datasets: [{
+                    label: 'Promedio Nota',
+                    data: [{% for m in course_metrics %}{{ m.avg }},{% endfor %}],
+                    backgroundColor: 'rgba(0, 242, 255, 0.5)',
+                    borderColor: '#00f2ff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true, max: 5, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'white' } },
+                    x: { ticks: { color: 'white' } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    </script>
+</body>
+</html>

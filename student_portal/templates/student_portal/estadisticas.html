@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estadísticas Neurales | IA Academy</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2103/2103633.png">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Outfit:wght@400;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+        body { background: var(--dark-bg); color: white; font-family: 'Space Grotesk', sans-serif; margin: 0; padding: 2rem; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; }
+        h1 { font-family: 'Outfit', sans-serif; font-size: 2.5rem; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+        .stat-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 2rem; padding: 2rem; backdrop-filter: blur(10px); }
+        
+        .grade-display { text-align: center; margin: 2rem 0; }
+        .grade-val { font-size: 4rem; font-weight: 800; color: var(--neon-blue); font-family: 'Outfit'; }
+        .grade-max { font-size: 1.5rem; color: rgba(255,255,255,0.3); }
+        
+        .passing-info { font-size: 0.8rem; text-align: center; color: rgba(255,255,255,0.5); border-top: 1px solid var(--glass-border); padding-top: 1rem; }
+        
+        .chart-container { margin-top: 2rem; height: 300px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Análisis de Rendimiento <span>{{ student.name|upper }}</span></h1>
+            <a href="{% url 'student_dashboard' %}" style="color: var(--neon-blue); text-decoration: none; font-weight: 700;">VOLVER AL DASHBOARD</a>
+        </div>
+
+        <div class="stats-grid">
+            {% for stat in course_stats %}
+            <div class="stat-card">
+                <h3 style="color: var(--neon-purple); margin-bottom: 1rem;">{{ stat.course.title }}</h3>
+                <div class="grade-display">
+                    <span class="grade-val">{{ stat.avg_grade }}</span>
+                    <span class="grade-max">/ 5.0</span>
+                </div>
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    {% if stat.avg_grade >= 3.0 %}
+                        <span style="background: rgba(0, 255, 128, 0.1); color: #00ff80; padding: 0.5rem 1rem; border-radius: 2rem; font-weight: 800; font-size: 0.8rem;">APROBADO</span>
+                    {% else %}
+                        <span style="background: rgba(255, 77, 77, 0.1); color: #ff4d4d; padding: 0.5rem 1rem; border-radius: 2rem; font-weight: 800; font-size: 0.8rem;">EN RIESGO</span>
+                    {% endif %}
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="chart-{{ stat.course.id }}"></canvas>
+                </div>
+
+                <div class="passing-info">
+                    Mínimo para aprobar: 3.0 | Máximo: 5.0
+                </div>
+            </div>
+            {% empty %}
+            <p>No hay datos de rendimiento disponibles.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+    {% for stat in course_stats %}
+    new Chart(document.getElementById('chart-{{ stat.course.id }}'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Completado', 'Pendiente'],
+            datasets: [{
+                data: [{{ stat.progress }}, {{ stat.pending }}],
+                backgroundColor: ['#00f2ff', 'rgba(255,255,255,0.05)'],
+                borderColor: 'transparent'
+            }]
+        },
+        options: {
+            cutout: '80%',
+            plugins: { legend: { display: false } }
+        }
+    });
+    {% endfor %}
+    </script>
+</body>
+</html>

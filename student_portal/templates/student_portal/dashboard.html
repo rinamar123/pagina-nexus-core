@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA ACADEMY | Neural Portal</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2103/2103633.png">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Outfit:wght@400;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: var(--dark-bg); 
+            color: white; 
+            font-family: 'Space Grotesk', sans-serif; 
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(0, 242, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(188, 19, 254, 0.05) 0%, transparent 50%);
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1300px; margin: 0 auto; padding: 2rem; }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 3rem;
+        }
+
+        .logo { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--neon-blue); }
+
+        .grid { display: grid; grid-template-columns: 280px 1fr; gap: 3rem; }
+        @media (max-width: 968px) { .grid { grid-template-columns: 1fr; } }
+
+        /* Sidebar con Dropdown */
+        .sidebar-nav { position: sticky; top: 2rem; height: fit-content; }
+        .sidebar-nav h2 { font-family: 'Outfit', sans-serif; font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem; color: rgba(255,255,255,0.4); }
+        
+        .nav-group { margin-bottom: 1rem; }
+        .nav-item {
+            padding: 1rem 1.2rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: white;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+        }
+        .nav-item:hover { border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.05); }
+        
+        .dropdown-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            padding-left: 1.5rem;
+        }
+        .nav-group:hover .dropdown-container { max-height: 500px; }
+        
+        .dropdown-item {
+            display: block;
+            padding: 0.8rem 1rem;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 0.8rem;
+            border-left: 1px solid var(--glass-border);
+            transition: 0.3s;
+        }
+        .dropdown-item:hover { color: var(--neon-blue); border-left-color: var(--neon-blue); padding-left: 1.5rem; }
+
+        /* Main Content */
+        .section-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+        .section-header h2 { font-family: 'Outfit', sans-serif; font-size: 1.6rem; }
+        .line { flex: 1; height: 1px; background: var(--glass-border); }
+
+        .node-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 2rem;
+            padding: 2.5rem;
+            backdrop-filter: blur(20px);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.4s;
+        }
+        .node-card:hover { border-color: var(--neon-blue); transform: scale(1.01); }
+
+        .node-content h3 { font-size: 1.5rem; margin-bottom: 0.5rem; font-family: 'Outfit', sans-serif; }
+        .node-content p { color: rgba(255,255,255,0.4); font-size: 0.9rem; }
+        
+        .node-actions { display: flex; gap: 1rem; }
+        .btn-view {
+            padding: 0.8rem 2rem;
+            background: rgba(0, 242, 255, 0.1);
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            border-radius: 1rem;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+        .btn-view:hover { background: var(--neon-blue); color: var(--dark-bg); }
+
+        .welcome-box { padding: 3rem; background: var(--glass); border-radius: 2rem; margin-bottom: 3rem; border: 1px solid var(--glass-border); position: relative; }
+        .welcome-box h1 { font-family: 'Outfit', sans-serif; font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .pulse-dot { width: 8px; height: 8px; background: #00ff80; border-radius: 50%; display: inline-block; margin-right: 10px; box-shadow: 0 0 10px #00ff80; }
+
+        /* ================= NOTIFICATION BELL STYLES ================= */
+        .notif-bell-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .notif-bell-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.3s ease;
+            padding: 0.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+        }
+
+        @keyframes bellRing {
+            0% { transform: rotate(0); }
+            15% { transform: rotate(15deg) scale(1.1); }
+            30% { transform: rotate(-15deg) scale(1.1); }
+            45% { transform: rotate(10deg) scale(1.1); }
+            60% { transform: rotate(-10deg) scale(1.1); }
+            75% { transform: rotate(5deg) scale(1.1); }
+            85% { transform: rotate(-5deg) scale(1.1); }
+            100% { transform: rotate(0) scale(1.1); }
+        }
+
+        .notif-bell-btn:hover {
+            animation: bellRing 0.8s ease-in-out;
+            transform: scale(1.1);
+        }
+
+        .btn-logout-nav {
+            color: #ff4d4d;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.4rem 1rem;
+            border: 1px solid transparent;
+            border-radius: 1rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+
+        .btn-logout-nav:hover {
+            color: white !important;
+            background: #ff4d4d;
+            border-color: #ff4d4d;
+            box-shadow: 0 0 15px rgba(255, 77, 77, 0.5);
+            transform: scale(1.05) translateY(-1px);
+        }
+
+        .notif-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: #ff4d4d;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 6px #ff4d4d;
+        }
+
+        .notif-dropdown {
+            position: absolute;
+            right: 0;
+            top: 2.5rem;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            width: 320px;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            display: none;
+            animation: slideDownNotif 0.3s ease-out;
+            text-align: left;
+        }
+
+        @keyframes slideDownNotif {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .notif-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--neon-blue);
+        }
+
+        .mark-all-read {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.4);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .mark-all-read:hover {
+            color: var(--neon-purple);
+        }
+
+        .notif-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notif-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            transition: 0.3s;
+        }
+
+        .notif-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .notif-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.3rem;
+        }
+
+        .notif-title {
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: white;
+        }
+
+        .notif-close-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            font-size: 0.7rem;
+            text-decoration: none;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notif-close-btn:hover {
+            color: #ff4d4d;
+        }
+
+        .notif-msg {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.4;
+            margin-bottom: 0.4rem;
+        }
+
+        /* 👤 Floating Profile Dropdown styling */
+        .profile-nav-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            cursor: pointer;
+            padding: 0.4rem 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            user-select: none;
+        }
+
+        .profile-nav-container:hover {
+            border-color: var(--neon-blue);
+            background: rgba(0, 242, 255, 0.03);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.15);
+        }
+
+        .profile-dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 3rem;
+            width: 320px;
+            background: rgba(10, 10, 12, 0.98);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(188, 19, 254, 0.1);
+            z-index: 1100;
+            display: none;
+            animation: slideDownProfileDropdown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 1.5rem;
+        }
+
+        @keyframes slideDownProfileDropdown {
+            from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .profile-dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            right: 25px;
+            width: 12px;
+            height: 12px;
+            background: rgba(10, 10, 12, 0.98);
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <div class="logo">IA ACADEMY</div>
+            <div style="display: flex; gap: 1.5rem; align-items: center;">
+                <!-- Cyberpunk Profile Status Badge & Trigger -->
+                <div class="profile-nav-container" id="profileNavContainer" onclick="toggleProfileDropdown(event)">
+                    {% if student.profile_picture and student.profile_picture.name != 'default.png' %}
+                        <img src="{{ student.profile_picture.url }}" alt="{{ student.name }}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--neon-blue); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);">
+                    {% else %}
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: rgba(188, 19, 254, 0.1); border: 1.5px solid var(--neon-purple); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; color: var(--neon-blue); box-shadow: 0 0 10px rgba(188, 19, 254, 0.2);">
+                            {{ student.name|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
+                    <span style="font-size: 0.75rem; font-weight: 700; color: white;">USUARIO SINCRO: <span style="color: var(--neon-purple);">{{ student.name|upper }}</span> <span style="font-size: 0.6rem; color: rgba(255,255,255,0.4); margin-left: 0.3rem;">▼</span></span>
+                    
+                    <!-- Floating Dropdown Panel containing all profile details and the edit button! -->
+                    <div class="profile-dropdown-menu" id="profileDropdownContainer" onclick="event.stopPropagation();">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center;">
+                            <!-- Large avatar in dropdown -->
+                            <div style="position: relative; width: 80px; height: 80px; border-radius: 50%; background: var(--glass); border: 2px solid var(--neon-purple); display: flex; justify-content: center; align-items: center; box-shadow: 0 0 15px rgba(188, 19, 254, 0.2); overflow: hidden;">
+                                {% if student.profile_picture and student.profile_picture.name != 'default.png' %}
+                                    <img src="{{ student.profile_picture.url }}" alt="{{ student.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% else %}
+                                    <div style="width: 100%; height: 100%; background: rgba(188, 19, 254, 0.15); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: bold; color: var(--neon-blue);">
+                                        {{ student.name|slice:":1"|upper }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Student details -->
+                            <div style="width: 100%;">
+                                <h4 style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: var(--neon-blue); margin: 0 0 0.8rem 0; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;">{{ student.name }}</h4>
+                                
+                                <div style="display: flex; flex-direction: column; gap: 0.7rem; font-size: 0.75rem; text-align: left; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 1rem; border: 1px solid rgba(255,255,255,0.04);">
+                                    <div><strong style="color: var(--neon-purple);">Correo:</strong> <span style="color: #ffffff; word-break: break-all;">{{ student.email }}</span></div>
+                                    <div><strong style="color: var(--neon-purple);">Teléfono:</strong> <span style="color: #ffffff;">{{ student.phone|default:"No registrado" }}</span></div>
+                                    <div><strong style="color: var(--neon-purple);">Acceso:</strong> <span style="color: #ffffff;">{{ student.get_level_display }}</span></div>
+                                    <div><strong style="color: var(--neon-purple);">Ubicación:</strong> <span style="color: #ffffff;">{{ student.address|default:"No registrada" }}</span></div>
+                                </div>
+                            </div>
+
+                            <!-- Separator line -->
+                            <div style="width: 100%; height: 1px; background: rgba(255,255,255,0.08); margin: 0.2rem 0;"></div>
+
+                            <!-- Dedicated Editar button at the bottom of dropdown -->
+                            <a href="{% url 'student_update_profile' %}" class="btn-view" style="width: 100%; text-align: center; justify-content: center; box-sizing: border-box; border-color: var(--neon-purple); color: var(--neon-purple); font-size: 0.75rem; font-weight: 800; padding: 0.5rem 1rem; border-radius: 1rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; box-shadow: 0 0 10px rgba(188, 19, 254, 0.1);" onmouseover="this.style.background='var(--neon-purple)'; this.style.color='#050505'; this.style.boxShadow='0 0 15px rgba(188, 19, 254, 0.45)';" onmouseout="this.style.background='none'; this.style.color='var(--neon-purple)'; this.style.boxShadow='0 0 10px rgba(188, 19, 254, 0.1)';">
+                                ⚙️ EDITAR PERFIL
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Notification Bell Container -->
+                <div class="notif-bell-container">
+                    <button class="notif-bell-btn" id="notifBellBtn" onclick="toggleNotifDropdown()">
+                        🔔
+                        {% if student.unread_notifications.count > 0 %}
+                            <span class="notif-badge">{{ student.unread_notifications.count }}</span>
+                        {% endif %}
+                    </button>
+                    <div class="notif-dropdown" id="notifDropdown">
+                        <div class="notif-header">
+                            <span>Notificaciones Neurales</span>
+                            <div style="display: flex; gap: 0.8rem;">
+                                {% if student.unread_notifications.count > 0 %}
+                                    <a href="#" onclick="handleNotifAction('{% url 'student_mark_all_read' %}', 'mark_all_read'); return false;" class="mark-all-read" style="color: var(--neon-blue);">Marcar todo leído</a>
+                                {% endif %}
+                                {% if notifications %}
+                                    <a href="#" onclick="handleNotifAction('{% url 'student_delete_all_notifs' %}', 'delete_all'); return false;" class="mark-all-read" style="color: #ff4d4d;">Borrar todas</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="notif-list" id="notifListContainer">
+                            {% for notif in notifications %}
+                                <div class="notif-item" id="notif-{{ notif.pk }}" style="{% if not notif.is_read %}border-left: 3px solid var(--neon-blue); background: rgba(0, 242, 255, 0.05);{% else %}opacity: 0.5;{% endif %}">
+                                    <div class="notif-item-header">
+                                        <span class="notif-title" id="notif-title-{{ notif.pk }}" style="{% if not notif.is_read %}color: var(--neon-blue);{% endif %}">{{ notif.title }}</span>
+                                        <div style="display: flex; gap: 0.5rem;">
+                                            {% if not notif.is_read %}
+                                                <a href="#" id="notif-read-btn-{{ notif.pk }}" onclick="handleNotifAction('{% url 'student_mark_read' notif.pk %}', 'mark_read', {{ notif.pk }}); return false;" class="notif-close-btn" title="Marcar como leída">👁️</a>
+                                            {% endif %}
+                                            <a href="#" onclick="handleNotifAction('{% url 'student_delete_notif' notif.pk %}', 'delete', {{ notif.pk }}); return false;" class="notif-close-btn" title="Borrar" style="color: #ff4d4d;">🗑️</a>
+                                        </div>
+                                    </div>
+                                    <p class="notif-msg">{{ notif.message }}</p>
+                                    <span class="notif-time">{{ notif.created_at|timesince }} ago</span>
+                                </div>
+                            {% empty %}
+                                <div class="notif-empty" id="notifEmptyState" style="padding: 2rem 1.5rem; text-align: center; font-size: 0.75rem; color: rgba(255,255,255,0.3);">Sin notificaciones pendientes.</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <a href="{% url 'student_logout' %}" class="btn-logout-nav">LOGOUT</a>
+            </div>
+        </nav>
+
+        <div class="grid">
+            <aside class="sidebar-nav">
+                <h2>Explorador</h2>
+
+                <div class="nav-group">
+                    <div class="nav-item" style="justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <span>🧠</span> Mis Nodos
+                        </div>
+                        <span style="font-size: 0.7rem; transition: 0.3s; opacity: 0.5;">▼</span>
+                    </div>
+                    <div class="dropdown-container">
+                        {% for course in courses %}
+                        <a href="{% url 'student_course_detail' course.id %}" class="dropdown-item">
+                            • {{ course.title|truncatechars:20 }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+
+                <a href="{% url 'student_stats' %}" class="nav-item">
+                    <span>📊</span> Estadísticas
+                </a>
+            </aside>
+
+            <main class="main-content">
+                <div class="welcome-box">
+                    <h1>Hola, <span style="color: var(--neon-blue);">{{ student.name }}</span></h1>
+                    <p style="color: rgba(255,255,255,0.4);"><span class="pulse-dot"></span>Conexión estable con el Núcleo de Aprendizaje.</p>
+                </div>
+
+                <div class="section-header">
+                    <h2>Cursos en Curso</h2>
+                    <div class="line"></div>
+                </div>
+
+                {% for course in courses %}
+                <div class="node-card">
+                    <div class="node-content">
+                        <h3>{{ course.title }}</h3>
+                        <p>{{ course.duration }} | Nivel: {{ course.get_level_display }}</p>
+                    </div>
+                    <div class="node-actions">
+                        <a href="{% url 'student_course_detail' course.id %}" class="btn-view">Continuar</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="text-align: center; padding: 4rem; background: var(--glass); border-radius: 2rem; border: 1px dashed var(--glass-border);">
+                    <p style="color: rgba(255,255,255,0.3);">No hay nodos activos en tu red.</p>
+                    <a href="{% url 'index' %}" style="color: var(--neon-blue); margin-top: 1rem; display: inline-block;">Sincronizar Nuevo Nodo</a>
+                </div>
+                {% endfor %}
+            </main>
+        </div>
+    </div>
+    <script>
+        function toggleProfileDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('profileDropdownContainer');
+            const isCurrentlyOpen = dropdown.style.display === 'block';
+            
+            // Close notification dropdown if it is open
+            const notifDropdown = document.getElementById('notifDropdown');
+            if (notifDropdown) notifDropdown.style.display = 'none';
+
+            dropdown.style.display = isCurrentlyOpen ? 'none' : 'block';
+        }
+
+        function toggleNotifDropdown() {
+            // Close profile dropdown if it is open
+            const profileDropdown = document.getElementById('profileDropdownContainer');
+            if (profileDropdown) profileDropdown.style.display = 'none';
+
+            const dropdown = document.getElementById('notifDropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Close the dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            const bellContainer = document.querySelector('.notif-bell-container');
+            const dropdown = document.getElementById('notifDropdown');
+            if (bellContainer && !bellContainer.contains(event.target)) {
+                if (dropdown) dropdown.style.display = 'none';
+            }
+
+            const profileNav = document.getElementById('profileNavContainer');
+            const profileDropdown = document.getElementById('profileDropdownContainer');
+            if (profileNav && !profileNav.contains(event.target)) {
+                if (profileDropdown) profileDropdown.style.display = 'none';
+            }
+        });
+
+        async function handleNotifAction(url, action, notifId = null) {
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        // Update unread count badge
+                        const badge = document.querySelector('.notif-badge');
+                        if (badge) {
+                            if (data.unread_count > 0) {
+                                badge.textContent = data.unread_count;
+                            } else {
+                                badge.remove();
+                            }
+                        }
+
+                        if (action === 'mark_read') {
+                            const item = document.getElementById(`notif-${notifId}`);
+                            if (item) {
+                                item.style.borderLeft = 'none';
+                                item.style.background = 'transparent';
+                                item.style.opacity = '0.5';
+                                const title = document.getElementById(`notif-title-${notifId}`);
+                                if (title) title.style.color = 'white';
+                                const readBtn = document.getElementById(`notif-read-btn-${notifId}`);
+                                if (readBtn) readBtn.remove();
+                            }
+                        } else if (action === 'delete') {
+                            const item = document.getElementById(`notif-${notifId}`);
+                            if (item) {
+                                item.remove();
+                                // Check if list is empty
+                                const listContainer = document.getElementById('notifListContainer');
+                                if (listContainer && listContainer.children.length === 0) {
+                                    listContainer.innerHTML = '<div class="notif-empty" style="padding: 2rem 1.5rem; text-align: center; font-size: 0.75rem; color: rgba(255,255,255,0.3);">Sin notificaciones pendientes.</div>';
+                                }
+                            }
+                        } else if (action === 'mark_all_read') {
+                            const items = document.querySelectorAll('.notif-item');
+                            items.forEach(item => {
+                                item.style.borderLeft = 'none';
+                                item.style.background = 'transparent';
+                                item.style.opacity = '0.5';
+                            });
+                            const titles = document.querySelectorAll('.notif-title');
+                            titles.forEach(title => title.style.color = 'white');
+                            const readBtns = document.querySelectorAll('.notif-close-btn[title="Marcar como leída"]');
+                            readBtns.forEach(btn => btn.remove());
+                            
+                            // Remove mark all read button
+                            const markAllBtn = document.querySelector('.mark-all-read[style*="var(--neon-blue)"]');
+                            if (markAllBtn) markAllBtn.remove();
+                        } else if (action === 'delete_all') {
+                            const listContainer = document.getElementById('notifListContainer');
+                            if (listContainer) {
+                                listContainer.innerHTML = '<div class="notif-empty" style="padding: 2rem 1.5rem; text-align: center; font-size: 0.75rem; color: rgba(255,255,255,0.3);">Sin notificaciones pendientes.</div>';
+                            }
+                            // Remove all header buttons
+                            const headerBtns = document.querySelectorAll('.mark-all-read');
+                            headerBtns.forEach(btn => btn.remove());
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error handling notification action:', error);
+            }
+        }
+    </script>
+
+</body>
+</html>
