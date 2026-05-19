@@ -48,11 +48,11 @@
                 </div>
 
                 <div class="card" style="margin-top: 2rem;">
-                    <h2>Estructura de la Red</h2>
+                    <h2>Módulos del Curso (Estructura de la Red)</h2>
                     {% for content in contents %}
                     <div class="content-item">
                         <h3>{{ content.title }}</h3>
-                        <p>{{ content.content|truncatewords:20 }}</p>
+                        <p>{{ content.content|striptags|truncatewords:20|safe }}</p>
                     </div>
                     {% empty %}
                     <p style="color: rgba(255,255,255,0.3);">Contenido en fase de entrenamiento...</p>

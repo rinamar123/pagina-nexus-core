@@ -22,6 +22,7 @@ urlpatterns = [
     path('curso/<int:pk>/examen/<int:attempt_pk>/resultado/', views.exam_result, name='exam_result'),
     path('curso/reto/submit/',               views.submit_challenge, name='submit_challenge'),
     path('curso/<int:pk>/diploma/',          views.student_diploma, name='student_diploma'),
+    path('curso/<int:pk>/solicitar-diploma/',views.student_request_diploma, name='student_request_diploma'),
 
 
     # Recuperación de contraseña

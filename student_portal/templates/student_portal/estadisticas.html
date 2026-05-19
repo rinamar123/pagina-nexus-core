@@ -39,6 +39,23 @@
             <a href="{% url 'student_dashboard' %}" style="color: var(--neon-blue); text-decoration: none; font-weight: 700;">VOLVER AL DASHBOARD</a>
         </div>
 
+        {% if messages %}
+        <div style="margin-bottom: 2rem;">
+            {% for message in messages %}
+            <div style="padding: 1rem; border-radius: 1rem; margin-bottom: 1rem; font-size: 0.85rem; font-weight: bold; 
+                {% if message.tags == 'success' %}
+                    background: rgba(0, 255, 128, 0.1); border: 1px solid #00ff80; color: #00ff80;
+                {% elif message.tags == 'error' %}
+                    background: rgba(255, 77, 77, 0.1); border: 1px solid #ff4d4d; color: #ff4d4d;
+                {% else %}
+                    background: rgba(0, 242, 255, 0.1); border: 1px solid var(--neon-blue); color: var(--neon-blue);
+                {% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <div class="stats-grid">
             {% for stat in course_stats %}
             <div class="stat-card">
@@ -61,6 +78,31 @@
 
                 <div class="passing-info">
                     Mínimo para aprobar: 3.0 | Máximo: 5.0
+                </div>
+
+                <!-- DIPLOMA CONTROL SECTION -->
+                <div style="margin-top: 1.5rem; text-align: center; border-top: 1px solid var(--glass-border); padding-top: 1.5rem;">
+                    <h4 style="font-family: 'Outfit'; font-size: 0.9rem; color: white; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.8rem;">DIPLOMA DE LOGRO</h4>
+                    {% if stat.diploma_status == 'eligible' %}
+                        <form method="POST" action="{% url 'student_request_diploma' stat.course.id %}">
+                            {% csrf_token %}
+                            <button type="submit" style="background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); border: none; color: white; padding: 0.6rem 1.5rem; border-radius: 1rem; font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: 0.3s; width: 100%; text-transform: uppercase; letter-spacing: 1px;">
+                                Solicitar Diploma
+                            </button>
+                        </form>
+                    {% elif stat.diploma_status == 'pending' %}
+                        <div style="background: rgba(255, 189, 46, 0.1); border: 1px solid #ffbd2e; color: #ffbd2e; padding: 0.6rem; border-radius: 1rem; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">
+                            En revisión por Admin
+                        </div>
+                    {% elif stat.diploma_status == 'approved' %}
+                        <a href="{% url 'student_diploma' stat.course.id %}" target="_blank" style="background: #00ff80; border: none; color: var(--dark-bg); padding: 0.6rem 1.5rem; border-radius: 1rem; font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: 0.3s; display: block; text-decoration: none; text-align: center; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 15px rgba(0, 255, 128, 0.3);">
+                            Descargar Diploma
+                        </a>
+                    {% else %}
+                        <div style="background: rgba(255,255,255,0.02); border: 1px dashed var(--glass-border); color: rgba(255,255,255,0.3); padding: 0.6rem; border-radius: 1rem; font-size: 0.75rem; line-height: 1.3;">
+                            Bloqueado (Progreso: {{ stat.progress }}% | Examen: {% if stat.exam_grade %}{{ stat.exam_grade }}{% else %}N/A{% endif %})
+                        </div>
+                    {% endif %}
                 </div>
             </div>
             {% empty %}

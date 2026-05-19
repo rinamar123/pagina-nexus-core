@@ -112,6 +112,32 @@
             transition: 0.3s; 
         }
         .btn-cancel:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        /* Responsive Media Queries */
+        @media (max-width: 992px) {
+            body { flex-direction: column; }
+            .sidebar { 
+                width: 100%; 
+                height: auto; 
+                position: relative; 
+                padding: 1.5rem; 
+                border-right: none; 
+                border-bottom: 1px solid rgba(255,255,255,0.05); 
+                box-sizing: border-box;
+            }
+            .sidebar h2 { margin-bottom: 1rem !important; text-align: center; }
+            .sidebar nav { flex-direction: row !important; flex-wrap: wrap; gap: 0.8rem !important; height: auto !important; }
+            .sidebar nav a { flex: 1; min-width: 150px; text-align: center; margin-top: 0 !important; }
+            .sidebar nav a[style*="margin-top: auto"] { margin-top: 0.5rem !important; width: 100%; }
+            .main { padding: 1.5rem; box-sizing: border-box; }
+            .form-card { padding: 2rem 1.5rem; border-radius: 1.5rem; }
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .btn-group { flex-direction: column; gap: 1rem; }
+            .btn-submit, .btn-cancel { width: 100%; text-align: center; }
+        }
     </style>
 </head>
 <body>

@@ -56,7 +56,20 @@
         // Static configuration mapping for each specific category
         const categoryConfigs = {
             "neural": {
-                code: "# Simulador de Red Neuronal - Nodo: [TITLE]\nlearning_rate = 0.05\nepochs = 100\nw1 = 0.8\nw2 = 0.4\nbias = -0.5\nactivation = \"sigmoid\"\n\n# Simulación de pérdida y precisión\nfor epoch in range(epochs):\n    loss = round(0.5 / (1 + epoch * learning_rate * 0.1), 4)\n    accuracy = round(0.5 + 0.49 * (1 - 1/(1+epoch*0.05)), 2)\n    if epoch % (epochs // 5) == 0:\n        print(f\"[Epoch {epoch}/{epochs}] Loss: {loss} | Acc: {accuracy}\")",
+                code: `# Simulador de Red Neuronal - Nodo: [TITLE]
+learning_rate = 0.05
+epochs = 100
+w1 = 0.8
+w2 = 0.4
+bias = -0.5
+activation = "sigmoid"
+
+# Simulación de pérdida y precisión
+for epoch in range(epochs):
+    loss = round(0.5 / (1 + epoch * learning_rate * 0.1), 4)
+    accuracy = round(0.5 + 0.49 * (1 - 1/(1+epoch*0.05)), 2)
+    if epoch % (epochs // 5) == 0:
+        print(f"[Epoch {epoch}/{epochs}] Loss: {loss} | Acc: {accuracy}")`,
                 html: `
                     <div style="display:flex; flex-direction:column; gap:1.2rem; background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.05); padding:1.2rem; border-radius:1rem;">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
@@ -114,7 +127,17 @@
                 `
             },
             "regression": {
-                code: "# Modelado de Regresión y Error - Nodo: [TITLE]\nslope_m = 1.5\nintercept_b = 10.0\nnoise_level = 15.0\ndata_points = 15\n\n# Cálculo de mínimos cuadrados y error cuadrático\nprint(\"Generando puntos de datos experimentales...\")\nx_vals = list(range(1, data_points + 1))\ny_real = [slope_m * x + 10.0 for x in x_vals]\nprint(f\"Ecuación del Modelo Ajustado: Y = {slope_m} * X + {intercept_b}\")",
+                code: `# Modelado de Regresión y Error - Nodo: [TITLE]
+slope_m = 1.5
+intercept_b = 10.0
+noise_level = 15.0
+data_points = 15
+
+# Cálculo de mínimos cuadrados y error cuadrático
+print("Generando puntos de datos experimentales...")
+x_vals = list(range(1, data_points + 1))
+y_real = [slope_m * x + 10.0 for x in x_vals]
+print(f"Ecuación del Modelo Ajustado: Y = {slope_m} * X + {intercept_b}")`,
                 html: `
                     <div style="display:flex; flex-direction:column; gap:1.2rem; background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.05); padding:1.2rem; border-radius:1rem;">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
@@ -156,7 +179,18 @@
                 `
             },
             "genetic": {
-                code: "# Algoritmo Genético - Optimización de: [TITLE]\npopulation_size = 50\ngenerations = 30\nmutation_rate = 0.1\ncrossover_point = 4\n\n# Simulación del bucle evolutivo\nprint(\"Iniciando simulación evolutiva...\")\nfor gen in range(generations):\n    fitness = round(0.2 + 0.79 * (1 - 1/(1+gen*0.15)), 3)\n    if gen % 5 == 0:\n        print(f\"Generación {gen}/{generations} | Max Fitness: {fitness}\")",
+                code: `# Algoritmo Genético - Optimización de: [TITLE]
+population_size = 50
+generations = 30
+mutation_rate = 0.1
+crossover_point = 4
+
+# Simulación del bucle evolutivo
+print("Iniciando simulación evolutiva...")
+for gen in range(generations):
+    fitness = round(0.2 + 0.79 * (1 - 1/(1+gen*0.15)), 3)
+    if gen % 5 == 0:
+        print(f"Generación {gen}/{generations} | Max Fitness: {fitness}")`,
                 html: `
                     <div style="display:flex; flex-direction:column; gap:1.2rem; background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.05); padding:1.2rem; border-radius:1rem;">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
@@ -205,7 +239,17 @@
                 `
             },
             "logic": {
-                code: "# Reglas de Inferencia Lógica y Decisión - Nodo: [TITLE]\ninput_value = 38.5\nthreshold = 37.5\n\n# Evaluación lógica formal\nif input_value >= threshold:\n    print(f\"REGLA ALERTA ACTIVA: {input_value} >= {threshold}\")\n    diagnosis = \"CRÍTICO / ALERTA\"\nelse:\n    diagnosis = \"ESTABLE / SEGURIDAD\"\nprint(f\"Resultado del Motor de Inferencia: {diagnosis}\")",
+                code: `# Reglas de Inferencia Lógica y Decisión - Nodo: [TITLE]
+input_value = 38.5
+threshold = 37.5
+
+# Evaluación lógica formal
+if input_value >= threshold:
+    print(f"REGLA ALERTA ACTIVA: {input_value} >= {threshold}")
+    diagnosis = "CRÍTICO / ALERTA"
+else:
+    diagnosis = "ESTABLE / SEGURIDAD"
+print(f"Resultado del Motor de Inferencia: {diagnosis}")`,
                 html: `
                     <div style="display:flex; flex-direction:column; gap:1.2rem; background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.05); padding:1.2rem; border-radius:1rem;">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
@@ -242,7 +286,18 @@
                 `
             },
             "swarm": {
-                code: "# Simulador Enjambre (PSO) - Nodo: [TITLE]\nnum_particles = 20\niterations = 50\nw_inertia = 0.8\nc1_cognitive = 2.0\nc2_social = 2.0\n\n# Simulación de convergencia de partículas hacia el óptimo\nfor it in range(iterations):\n    err = round(10.0 / (1 + it * w_inertia * 0.4), 3)\n    if it % 10 == 0:\n        print(f\"Iteración {it}/{iterations} | Gbest Error: {err}\")",
+                code: `# Simulador Enjambre (PSO) - Nodo: [TITLE]
+num_particles = 20
+iterations = 50
+w_inertia = 0.8
+c1_cognitive = 2.0
+c2_social = 2.0
+
+# Simulación de convergencia de partículas hacia el óptimo
+for it in range(iterations):
+    err = round(10.0 / (1 + it * w_inertia * 0.4), 3)
+    if it % 10 == 0:
+        print(f"Iteración {it}/{iterations} | Gbest Error: {err}")`,
                 html: `
                     <div style="display:flex; flex-direction:column; gap:1.2rem; background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.05); padding:1.2rem; border-radius:1rem;">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
@@ -280,7 +335,13 @@
                 `
             },
             "universal": {
-                code: "# Simulación Universal - Nodo: [TITLE]\nvariable_a = 5.0\nvariable_b = 2.5\nconstant_k = 1.2\n\nresult = round(variable_a * 10.0 + variable_b * 3.1416 * constant_k, 3)\nprint(f\"Resultado del cálculo universal: {result}\")",
+                code: `# Simulación Universal - Nodo: [TITLE]
+variable_a = 5.0
+variable_b = 2.5
+constant_k = 1.2
+
+result = round(variable_a * 10.0 + variable_b * 3.1416 * constant_k, 3)
+print(f"Resultado del cálculo universal: {result}")`,
                 html: `
                     <div style="display:flex; flex-direction:column; gap:1.2rem; background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.05); padding:1.2rem; border-radius:1rem;">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
@@ -577,7 +638,8 @@
         const challenges = {
             "Historia de la IA": {
                 prompt: "Analiza la diferencia fundamental entre el enfoque de la Inteligencia Artificial Simbólica y el Conexionista. A partir del siguiente esquema conceptual:",
-                code: `# Enfoque A: Representación basada en lógica formal, reglas semánticas y sistemas expertos deductivos.\n# Enfoque B: Optimización probabilística de capas neuronales que aprenden de la experiencia empírica.`,
+                code: `# Enfoque A: Representación basada en lógica formal, reglas semánticas y sistemas expertos deductivos.
+# Enfoque B: Optimización probabilística de capas neuronales que aprenden de la experiencia empírica.`,
                 choices: [
                     "El Enfoque A es Simbólico y el Enfoque B es Conexionista.",
                     "El Enfoque A es Conexionista y el Enfoque B es Simbólico.",
@@ -588,7 +650,12 @@
             },
             "Test de Turing": {
                 prompt: "Examina el flujo de diálogo en Python diseñado para evaluar a un agente candidato en el Test de Turing:",
-                code: `def evaluar_dialogo(respuestas_agente):\n    score = 0\n    for r in respuestas_agente:\n        if es_indistinguible_de_humano(r):\n            score += 1\n    return score >= len(respuestas_agente) * 0.7`,
+                code: `def evaluar_dialogo(respuestas_agente):
+    score = 0
+    for r in respuestas_agente:
+        if es_indistinguible_de_humano(r):
+            score += 1
+    return score >= len(respuestas_agente) * 0.7`,
                 choices: [
                     "Si el agente obtiene un score superior al 70%, se le considera indistinguible de un humano y supera la prueba.",
                     "El script da error porque no evalúa la velocidad de cálculo binario de la CPU.",
@@ -599,7 +666,11 @@
             },
             "Tu Primera Neurona": {
                 prompt: "Utilizando la fórmula básica de entrada neta (z = sum(x_i * w_i) + bias) para una neurona con dos entradas, calcula el valor de z con los datos indicados en la visualización:",
-                code: `x1 = 1.0,  w1 = 0.5\nx2 = 0.0,  w2 = -0.2\nbias = 0.1\n\nz = (x1 * w1) + (x2 * w2) + bias`,
+                code: `x1 = 1.0,  w1 = 0.5
+x2 = 0.0,  w2 = -0.2
+bias = 0.1
+
+z = (x1 * w1) + (x2 * w2) + bias`,
                 choices: [
                     "z = 0.6",
                     "z = 0.4",
@@ -610,7 +681,9 @@
             },
             "Estadística Predictiva": {
                 prompt: "Considera la siguiente colección de datos empíricos cargados para un modelado predictivo simple en Python:",
-                code: `datos = [2, 4, 4, 4, 5, 5, 7, 9]\n\n# Ecuación matemática: Media = Sumatoria(datos) / N`,
+                code: `datos = [2, 4, 4, 4, 5, 5, 7, 9]
+
+# Ecuación matemática: Media = Sumatoria(datos) / N`,
                 choices: [
                     "La media de la muestra es 5.0",
                     "La media de la muestra es 4.5",
@@ -621,7 +694,8 @@
             },
             "Variables Dummy": {
                 prompt: "Dado un conjunto de datos que registra la ciudad de residencia de tres estudiantes, analiza el código de One-Hot Encoding:",
-                code: `ciudades = ['Medellín', 'Medellín', 'Cali']\n# Al codificar con pd.get_dummies, ¿cómo queda representado 'Cali' en el vector binario?`,
+                code: `ciudades = ['Medellín', 'Medellín', 'Cali']
+# Al codificar con pd.get_dummies, ¿cómo queda representado 'Cali' en el vector binario?`,
                 choices: [
                     "[Cali = 1, Medellín = 0]",
                     "[Cali = 0, Medellín = 1]",
@@ -632,7 +706,10 @@
             },
             "Regresión Logística": {
                 prompt: "Estudia el fragmento de código que computa la probabilidad de aprobación en base al umbral estándar de decisión logística:",
-                code: `probabilidad = 0.73\numbral_decision = 0.50\n\naprobado = probabilidad >= umbral_decision`,
+                code: `probabilidad = 0.73
+umbral_decision = 0.50
+
+aprobado = probabilidad >= umbral_decision`,
                 choices: [
                     "aprobado = True (Clase 1 / Evento exitoso)",
                     "aprobado = False (Clase 0 / Evento fallido)",
@@ -643,7 +720,11 @@
             },
             "Cruce (Crossover)": {
                 prompt: "Analiza la siguiente recombinación génica realizada en el punto de corte (índice 2) en un algoritmo genético:",
-                code: `padre1 = [1, 1, 1, 1]\npadre2 = [0, 0, 0, 0]\npunto_cruce = 2\n\nhijo = padre1[:punto_cruce] + padre2[punto_cruce:]`,
+                code: `padre1 = [1, 1, 1, 1]
+padre2 = [0, 0, 0, 0]
+punto_cruce = 2
+
+hijo = padre1[:punto_cruce] + padre2[punto_cruce:]`,
                 choices: [
                     "hijo = [1, 1, 0, 0]",
                     "hijo = [1, 0, 1, 0]",
@@ -654,7 +735,11 @@
             },
             "Mutación": {
                 prompt: "Estudia el siguiente código que simula la mutación de un individuo binario mediante inversión de bit en el índice especificado:",
-                code: `individuo = [1, 0, 1, 0]\nindice_mutar = 1\n\n# Invertir bit en indice_mutar\nindividuo[indice_mutar] = 1 if individuo[indice_mutar] == 0 else 0`,
+                code: `individuo = [1, 0, 1, 0]
+indice_mutar = 1
+
+# Invertir bit en indice_mutar
+individuo[indice_mutar] = 1 if individuo[indice_mutar] == 0 else 0`,
                 choices: [
                     "individuo mutado = [1, 1, 1, 0]",
                     "individuo mutado = [1, 0, 1, 0]",
@@ -739,7 +824,7 @@
             const challengeChoices = document.getElementById("challengeChoices");
 
             // 1. Sanitize lesson title and match category
-            let cleanTitle = lessonTitle.replace(/^\[[A-Z]+\]\s*/, "");
+            let cleanTitle = lessonTitle.replace(/^\s*\[[A-Z]+\]\s*/, "");
             if (cleanTitle.includes("Introducción a la IA") || cleanTitle.includes("Historia de la IA")) {
                 cleanTitle = "Historia de la IA";
             } else if (cleanTitle.includes("Test de Turing")) {
@@ -751,7 +836,7 @@
 
             // 2. Build multi-tab container structure in visualizerCanvas
             const visualTabContent = isCustomVisualizer ? visualizers[cleanTitle] : (categoryConfigs[category] ? categoryConfigs[category].html : categoryConfigs["universal"].html);
-            const defaultCode = isCustomVisualizer ? `\n# Simulador Interactivo - Nodo de Clase: \${cleanTitle}\n# Modifica los parámetros en la pestaña visual para ver el código o edita aquí y simula!\n` : (categoryConfigs[category] ? categoryConfigs[category].code.replace("[TITLE]", cleanTitle) : categoryConfigs["universal"].code.replace("[TITLE]", cleanTitle));
+            const defaultCode = isCustomVisualizer ? `\n# Simulador Interactivo - Nodo de Clase: ${cleanTitle}\n# Modifica los parámetros en la pestaña visual para ver el código o edita aquí y simula!\n` : (categoryConfigs[category] ? categoryConfigs[category].code.replace("[TITLE]", cleanTitle) : categoryConfigs["universal"].code.replace("[TITLE]", cleanTitle));
 
             visualizerCanvas.innerHTML = `
                 <div class="interactive-playground-container" style="display:flex; flex-direction:column; gap:1.2rem;">
@@ -763,13 +848,13 @@
                     
                     <!-- Visual Tab content area -->
                     <div id="playground-tab-content-visual" style="display:block;">
-                        \${visualTabContent}
+                        ${visualTabContent}
                     </div>
                     
                     <!-- Code Editor Tab content area -->
                     <div id="playground-tab-content-code" style="display:none; flex-direction:column; gap:1rem;">
                         <div style="font-size:0.75rem; color:rgba(255,255,255,0.5);">Modifica las variables numéricas en el código Python de abajo y haz clic en "Ejecutar Simulación" para recalcular el modelo en tiempo real:</div>
-                        <textarea id="code-sandbox-editor" style="width:100%; height:130px; background:#070709; border:1px solid rgba(255,255,255,0.1); border-radius:0.6rem; color:#a9ffb2; font-family:'Courier New', monospace; font-size:0.8rem; padding:0.8rem; resize:vertical; outline:none;" spellcheck="false">\${defaultCode}</textarea>
+                        <textarea id="code-sandbox-editor" style="width:100%; height:130px; background:#070709; border:1px solid rgba(255,255,255,0.1); border-radius:0.6rem; color:#a9ffb2; font-family:'Courier New', monospace; font-size:0.8rem; padding:0.8rem; resize:vertical; outline:none;" spellcheck="false">${defaultCode}</textarea>
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <button id="code-sandbox-run-btn" onclick="runCodeSandbox()" style="background:var(--neon-blue); border:none; color:black; font-weight:bold; padding:0.5rem 1.2rem; border-radius:0.4rem; cursor:pointer; font-size:0.8rem; transition:0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">▶️ Ejecutar Simulación</button>
                             <span style="font-size:0.7rem; color:var(--neon-purple); font-family:monospace;">sandbox://python_engine</span>
@@ -1127,7 +1212,7 @@
                         const scaledX = (x / 380) * Math.PI * 6;
                         const waveVal = Math.sin(scaledX) * (ua * 4) + Math.cos(scaledX * 2) * (ub * 2);
                         const py = 55 - waveVal;
-                        pts.push(\`\${x+10},\${py}\`);
+                        pts.push(`${x+10},${py}`);
                     }
 
                     const path = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
@@ -1156,35 +1241,35 @@
             let code = editor.value;
 
             if (category === "neural") {
-                code = code.replace(/learning_rate\s*=\s*[\d\.]+/, `learning_rate = \${params.lr.toFixed(2)}`);
-                code = code.replace(/epochs\s*=\s*\d+/, `epochs = \${params.epochs}`);
-                code = code.replace(/w1\s*=\s*[\d\.-]+/, `w1 = \${params.w1.toFixed(1)}`);
-                code = code.replace(/bias\s*=\s*[\d\.-]+/, `bias = \${params.bias.toFixed(1)}`);
+                code = code.replace(/learning_rate\s*=\s*[\d\.]+/, `learning_rate = ${params.lr.toFixed(2)}`);
+                code = code.replace(/epochs\s*=\s*\d+/, `epochs = ${params.epochs}`);
+                code = code.replace(/w1\s*=\s*[\d\.-]+/, `w1 = ${params.w1.toFixed(1)}`);
+                code = code.replace(/bias\s*=\s*[\d\.-]+/, `bias = ${params.bias.toFixed(1)}`);
             }
             else if (category === "regression") {
-                code = code.replace(/slope_m\s*=\s*[\d\.-]+/, `slope_m = \${params.m.toFixed(1)}`);
-                code = code.replace(/intercept_b\s*=\s*[\d\.-]+/, `intercept_b = \${params.b.toFixed(1)}`);
-                code = code.replace(/data_points\s*=\s*\d+/, `data_points = \${params.pts}`);
-                code = code.replace(/noise_level\s*=\s*[\d\.-]+/, `noise_level = \${params.noise.toFixed(1)}`);
+                code = code.replace(/slope_m\s*=\s*[\d\.-]+/, `slope_m = ${params.m.toFixed(1)}`);
+                code = code.replace(/intercept_b\s*=\s*[\d\.-]+/, `intercept_b = ${params.b.toFixed(1)}`);
+                code = code.replace(/data_points\s*=\s*\d+/, `data_points = ${params.pts}`);
+                code = code.replace(/noise_level\s*=\s*[\d\.-]+/, `noise_level = ${params.noise.toFixed(1)}`);
             }
             else if (category === "genetic") {
-                code = code.replace(/population_size\s*=\s*\d+/, `population_size = \${params.pop}`);
-                code = code.replace(/generations\s*=\s*\d+/, `generations = \${params.gens}`);
-                code = code.replace(/mutation_rate\s*=\s*[\d\.]+/, `mutation_rate = \${params.mut.toFixed(2)}`);
-                code = code.replace(/crossover_point\s*=\s*\d+/, `crossover_point = \${params.crossp}`);
+                code = code.replace(/population_size\s*=\s*\d+/, `population_size = ${params.pop}`);
+                code = code.replace(/generations\s*=\s*\d+/, `generations = ${params.gens}`);
+                code = code.replace(/mutation_rate\s*=\s*[\d\.]+/, `mutation_rate = ${params.mut.toFixed(2)}`);
+                code = code.replace(/crossover_point\s*=\s*\d+/, `crossover_point = ${params.crossp}`);
             }
             else if (category === "logic") {
-                code = code.replace(/input_value\s*=\s*[\d\.-]+/, `input_value = \${params.val.toFixed(1)}`);
-                code = code.replace(/threshold\s*=\s*[\d\.-]+/, `threshold = \${params.th.toFixed(1)}`);
+                code = code.replace(/input_value\s*=\s*[\d\.-]+/, `input_value = ${params.val.toFixed(1)}`);
+                code = code.replace(/threshold\s*=\s*[\d\.-]+/, `threshold = ${params.th.toFixed(1)}`);
             }
             else if (category === "swarm") {
-                code = code.replace(/c1_cognitive\s*=\s*[\d\.-]+/, `c1_cognitive = \${params.c1.toFixed(1)}`);
-                code = code.replace(/c2_social\s*=\s*[\d\.-]+/, `c2_social = \${params.c2.toFixed(1)}`);
-                code = code.replace(/w_inertia\s*=\s*[\d\.-]+/, `w_inertia = \${params.w.toFixed(2)}`);
+                code = code.replace(/c1_cognitive\s*=\s*[\d\.-]+/, `c1_cognitive = ${params.c1.toFixed(1)}`);
+                code = code.replace(/c2_social\s*=\s*[\d\.-]+/, `c2_social = ${params.c2.toFixed(1)}`);
+                code = code.replace(/w_inertia\s*=\s*[\d\.-]+/, `w_inertia = ${params.w.toFixed(2)}`);
             }
             else if (category === "universal") {
-                code = code.replace(/variable_a\s*=\s*[\d\.-]+/, `variable_a = \${params.ua.toFixed(1)}`);
-                code = code.replace(/variable_b\s*=\s*[\d\.-]+/, `variable_b = \${params.ub.toFixed(1)}`);
+                code = code.replace(/variable_a\s*=\s*[\d\.-]+/, `variable_a = ${params.ua.toFixed(1)}`);
+                code = code.replace(/variable_b\s*=\s*[\d\.-]+/, `variable_b = ${params.ub.toFixed(1)}`);
             }
 
             editor.value = code;
@@ -1246,9 +1331,9 @@
                         for (let e = 0; e <= epochs; e += Math.max(1, Math.floor(epochs / 4))) {
                             const loss = (0.5 / (1 + e * lr * 0.2)).toFixed(4);
                             const acc = (0.5 + 0.49 * (1 - 1/(1+e*lr*0.1))).toFixed(2);
-                            logs.push(`[Época \${e}/\${epochs}] Loss: \${loss} | Prec: \${acc} | w1_grad: \${(w1*0.01).toFixed(4)}`);
+                            logs.push(`[Época ${e}/${epochs}] Loss: ${loss} | Prec: ${acc} | w1_grad: ${(w1*0.01).toFixed(4)}`);
                         }
-                        logs.push(`\n🚀 Entrenamiento Neural completado con éxito. Pesos ajustados. Final Loss: \${(0.5 / (1 + epochs * lr * 0.2)).toFixed(4)}`);
+                        logs.push(`\n🚀 Entrenamiento Neural completado con éxito. Pesos ajustados. Final Loss: ${(0.5 / (1 + epochs * lr * 0.2)).toFixed(4)}`);
                     }
                     else if (category === "regression") {
                         const mMatch = editorText.match(/slope_m\s*=\s*([\d\.-]+)/);
@@ -1272,10 +1357,10 @@
                         const r2 = Math.max(0.01, Math.min(0.99, 1 - (mse / 300)));
 
                         logs.push(`Ajustando modelo de regresión lineal...`);
-                        logs.push(`Número de muestras (N): \${pts} | Nivel de ruido: \${noise}`);
-                        logs.push(`m óptima ajustada: \${m.toFixed(4)} | b óptima: \${b.toFixed(4)}`);
-                        logs.push(`Error Cuadrático Medio final (MSE): \${mse.toFixed(2)}`);
-                        logs.push(`Coeficiente de Determinación (R²): \${r2.toFixed(4)}`);
+                        logs.push(`Número de muestras (N): ${pts} | Nivel de ruido: ${noise}`);
+                        logs.push(`m óptima ajustada: ${m.toFixed(4)} | b óptima: ${b.toFixed(4)}`);
+                        logs.push(`Error Cuadrático Medio final (MSE): ${mse.toFixed(2)}`);
+                        logs.push(`Coeficiente de Determinación (R²): ${r2.toFixed(4)}`);
                     }
                     else if (category === "genetic") {
                         const popMatch = editorText.match(/population_size\s*=\s*(\d+)/);
@@ -1295,10 +1380,10 @@
 
                         if (sPop) { sPop.value = pop; sGens.value = gens; sMut.value = mut; sCrossP.value = crossp; }
 
-                        logs.push(`Creando población inicial aleatoria de \${pop} individuos...`);
+                        logs.push(`Creando población inicial aleatoria de ${pop} individuos...`);
                         for (let g = 0; g <= gens; g += Math.max(1, Math.floor(gens / 5))) {
                             const fit = (0.2 + 0.79 * (1 - 1/(1+g*mut*1.5))).toFixed(4);
-                            logs.push(`Generación \${g}/\${gens} | Mutados: \${Math.floor(pop * mut)} | Max Fitness: \${fit}`);
+                            logs.push(`Generación ${g}/${gens} | Mutados: ${Math.floor(pop * mut)} | Max Fitness: ${fit}`);
                         }
                         logs.push(`\n🧬 Óptimo Genético alcanzado. Diversidad cromosómica preservada.`);
                     }
@@ -1315,11 +1400,11 @@
                         if (sIn) { sIn.value = val; sTh.value = th; }
 
                         logs.push(`Evaluando motor de inferencia deductiva...`);
-                        logs.push(`Entrada de Sensores: \${val} | Umbral de Activación: \${th}`);
+                        logs.push(`Entrada de Sensores: ${val} | Umbral de Activación: ${th}`);
                         if (val >= th) {
-                            logs.push(`[REGLA DISPARADA]: IF (\${val} >= \${th}) -> DIAGNOSIS = ALERTA CRÍTICA`);
+                            logs.push(`[REGLA DISPARADA]: IF (${val} >= ${th}) -> DIAGNOSIS = ALERTA CRÍTICA`);
                         } else {
-                            logs.push(`[REGLA CUMPLIDA]: IF (\${val} < \${th}) -> DIAGNOSIS = SISTEMA ESTABLE`);
+                            logs.push(`[REGLA CUMPLIDA]: IF (${val} < ${th}) -> DIAGNOSIS = SISTEMA ESTABLE`);
                         }
                     }
                     else if (category === "swarm") {
@@ -1338,10 +1423,10 @@
                         if (sC1) { sC1.value = c1; sC2.value = c2; sW.value = w; }
 
                         logs.push(`Iniciando optimización por enjambre de partículas (PSO)...`);
-                        logs.push(`Inercia w: \${w} | c1 cognitivo: \${c1} | c2 social: \${c2}`);
+                        logs.push(`Inercia w: ${w} | c1 cognitivo: ${c1} | c2 social: ${c2}`);
                         for (let i = 0; i <= 50; i += 10) {
                             const err = (10.0 / (1 + i * w * 0.4)).toFixed(4);
-                            logs.push(`Iteración \${i}/50 | Mejor error global (gbest): \${err}`);
+                            logs.push(`Iteración ${i}/50 | Mejor error global (gbest): ${err}`);
                         }
                         logs.push(`\n🪐 Enjambre convergido en el mínimo absoluto de la función.`);
                     }
@@ -1359,11 +1444,11 @@
 
                         const res = (ua * 10.0 + ub * 3.1416).toFixed(3);
                         logs.push(`Evaluando cálculo matricial general...`);
-                        logs.push(`Variable A: \${ua} | Variable B: \${ub}`);
-                        logs.push(`Resultado de la computación del modelo: \${res}`);
+                        logs.push(`Variable A: ${ua} | Variable B: ${ub}`);
+                        logs.push(`Resultado de la computación del modelo: ${res}`);
                     }
                 } catch(err) {
-                    logs.push(`[ERROR]: Excepción de sintaxis de Python: \${err.message}`);
+                    logs.push(`[ERROR]: Excepción de sintaxis de Python: ${err.message}`);
                 }
 
                 // Inject logs into terminal console
@@ -1415,9 +1500,9 @@
                     label.innerText = m.year;
                     card.innerHTML = `
                         <div style="flex:1;">
-                            <span style="font-size:0.65rem; background:rgba(0,242,255,0.15); color:var(--neon-blue); padding:0.2rem 0.5rem; border-radius:0.3rem; font-weight:800; text-transform:uppercase;">\${m.paradigm}</span>
-                            <h4 style="margin:0.5rem 0 0.2rem 0; color:white; font-size:1rem; font-family:'Outfit';">\${m.title}</h4>
-                            <p style="margin:0; font-size:0.8rem; color:rgba(255,255,255,0.7); line-height:1.4;">\${m.text}</p>
+                            <span style="font-size:0.65rem; background:rgba(0,242,255,0.15); color:var(--neon-blue); padding:0.2rem 0.5rem; border-radius:0.3rem; font-weight:800; text-transform:uppercase;">${m.paradigm}</span>
+                            <h4 style="margin:0.5rem 0 0.2rem 0; color:white; font-size:1rem; font-family:'Outfit';">${m.title}</h4>
+                            <p style="margin:0; font-size:0.8rem; color:rgba(255,255,255,0.7); line-height:1.4;">${m.text}</p>
                         </div>
                     `;
                 }
@@ -1441,7 +1526,7 @@
                     const uMsg = document.createElement("div");
                     uMsg.style.color = "white";
                     uMsg.style.marginBottom = "0.3rem";
-                    uMsg.innerHTML = \`<strong>[Tú]:</strong> \${text}\`;
+                    uMsg.innerHTML = `<strong>[Tú]:</strong> ${text}`;
                     messages.appendChild(uMsg);
                     input.value = "";
                     messages.scrollTop = messages.scrollHeight;
@@ -1461,7 +1546,7 @@
                         const rMsg = document.createElement("div");
                         rMsg.style.color = "#ffaa00";
                         rMsg.style.marginBottom = "0.3rem";
-                        rMsg.innerHTML = \`<strong>[Interlocutor]:</strong> \${reply}\`;
+                        rMsg.innerHTML = `<strong>[Interlocutor]:</strong> ${reply}`;
                         messages.appendChild(rMsg);
                         messages.scrollTop = messages.scrollHeight;
                     }, 800);
@@ -1563,12 +1648,12 @@
                     const meanPct = ((mean - min) / (max - min)) * 80;
                     const line = document.createElement("div");
                     line.style.position = "absolute";
-                    line.style.bottom = `\${meanPct}%`;
+                    line.style.bottom = `${meanPct}%`;
                     line.style.left = "0";
                     line.style.width = "100%";
                     line.style.borderBottom = "2px dashed var(--neon-blue)";
                     line.style.zIndex = "2";
-                    line.innerHTML = \`<span style="font-size:0.6rem; color:var(--neon-blue); background:#050505; padding:0.1rem 0.3rem; border-radius:0.2rem; position:absolute; right:5px; bottom:2px;">MEDIA: \${mean.toFixed(1)}</span>\`;
+                    line.innerHTML = `<span style="font-size:0.6rem; color:var(--neon-blue); background:#050505; padding:0.1rem 0.3rem; border-radius:0.2rem; position:absolute; right:5px; bottom:2px;">MEDIA: ${mean.toFixed(1)}</span>`;
                     canvas.appendChild(line);
                     
                     // Bars
@@ -1582,13 +1667,13 @@
                     raw.forEach(val => {
                         const pct = ((val - min) / (max - min)) * 80;
                         const bar = document.createElement("div");
-                        bar.style.width = `\${Math.max(15, 60 / raw.length)}%`;
-                        bar.style.height = `\${pct}%`;
+                        bar.style.width = `${Math.max(15, 60 / raw.length)}%`;
+                        bar.style.height = `${pct}%`;
                         bar.style.background = "linear-gradient(to top, var(--neon-purple), #ff00e6)";
                         bar.style.borderRadius = "0.3rem 0.3rem 0 0";
                         bar.style.position = "relative";
                         bar.style.textAlign = "center";
-                        bar.innerHTML = \`<span style="font-size:0.65rem; color:white; position:absolute; top:-15px; left:50%; transform:translateX(-50%); font-weight:bold;">\${val}</span>\`;
+                        bar.innerHTML = `<span style="font-size:0.65rem; color:white; position:absolute; top:-15px; left:50%; transform:translateX(-50%); font-weight:bold;">${val}</span>`;
                         container.appendChild(bar);
                     });
                     
@@ -1619,10 +1704,10 @@
                         const tr = document.createElement("tr");
                         tr.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
                         tr.innerHTML = `
-                            <td style="padding:0.6rem; text-align:left; color:white; font-weight:bold;">Estudiante \${idx+1} (\${choice})</td>
-                            <td style="padding:0.6rem; background:\${choice === 'Bogotá' ? 'rgba(0,255,128,0.05)' : 'transparent'};">\${cellBog}</td>
-                            <td style="padding:0.6rem; background:\${choice === 'Cali' ? 'rgba(0,255,128,0.05)' : 'transparent'};">\${cellCal}</td>
-                            <td style="padding:0.6rem; background:\${choice === 'Medellín' ? 'rgba(0,255,128,0.05)' : 'transparent'};">\${cellMed}</td>
+                            <td style="padding:0.6rem; text-align:left; color:white; font-weight:bold;">Estudiante ${idx+1} (${choice})</td>
+                            <td style="padding:0.6rem; background:${choice === 'Bogotá' ? 'rgba(0,255,128,0.05)' : 'transparent'};">${cellBog}</td>
+                            <td style="padding:0.6rem; background:${choice === 'Cali' ? 'rgba(0,255,128,0.05)' : 'transparent'};">${cellCal}</td>
+                            <td style="padding:0.6rem; background:${choice === 'Medellín' ? 'rgba(0,255,128,0.05)' : 'transparent'};">${cellMed}</td>
                         `;
                         body.appendChild(tr);
                     });
@@ -1651,7 +1736,7 @@
                     vTh.innerText = threshold.toFixed(2);
                     
                     const prob = 1 / (1 + Math.exp(-z));
-                    pVal.innerText = \`\${(prob * 100).toFixed(1)}%\`;
+                    pVal.innerText = `${(prob * 100).toFixed(1)}%`;
                     
                     const isClass1 = prob >= threshold;
                     if (isClass1) {
@@ -1689,7 +1774,7 @@
                         const px = 150 + (x * 20); // Scale x from [-6, 6] to [30, 270]
                         const pyVal = 1 / (1 + Math.exp(-x));
                         const py = 115 - (pyVal * 100); // Scale y from [0, 1] to [115, 15]
-                        points.push(\`\${px},\${py}\`);
+                        points.push(`${px},${py}`);
                     }
                     
                     const path = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
@@ -1759,9 +1844,9 @@
                     const p2Left = p2Str.slice(0, point);
                     const p2Right = p2Str.slice(point);
                     
-                    visP1.innerHTML = \`<span style="color:var(--neon-blue); font-weight:bold;">\${p1Left}</span><span style="color:rgba(255,255,255,0.4);">\${p1Right}</span>\`;
-                    visP2.innerHTML = \`<span style="color:rgba(255,255,255,0.4);">\${p2Left}</span><span style="color:var(--neon-purple); font-weight:bold;">\${p2Right}</span>\`;
-                    visHijo.innerHTML = \`<span style="color:var(--neon-blue); text-shadow:0 0 10px var(--neon-blue); font-weight:bold;">\${p1Left}</span><span style="color:var(--neon-purple); text-shadow:0 0 10px var(--neon-purple); font-weight:bold;">\${p2Right}</span>\`;
+                    visP1.innerHTML = `<span style="color:var(--neon-blue); font-weight:bold;">${p1Left}</span><span style="color:rgba(255,255,255,0.4);">${p1Right}</span>`;
+                    visP2.innerHTML = `<span style="color:rgba(255,255,255,0.4);">${p2Left}</span><span style="color:var(--neon-purple); font-weight:bold;">${p2Right}</span>`;
+                    visHijo.innerHTML = `<span style="color:var(--neon-blue); text-shadow:0 0 10px var(--neon-blue); font-weight:bold;">${p1Left}</span><span style="color:var(--neon-purple); text-shadow:0 0 10px var(--neon-purple); font-weight:bold;">${p2Right}</span>`;
                 }
                 
                 if (sPoint) {
@@ -1796,11 +1881,11 @@
                     
                     for (let i = 0; i < raw.length; i++) {
                         if (i === idx) {
-                            origHtml += \`<span style="color:#ff3333; font-weight:bold; border:1px solid rgba(255,51,51,0.3); padding:0 3px; border-radius:3px;">\${raw[i]}</span>\`;
-                            mutHtml += \`<span style="color:#00ff80; font-weight:bold; border:1px solid rgba(0,255,128,0.5); padding:0 3px; border-radius:3px; text-shadow:0 0 8px #00ff80;">\${mutated[i]}</span>\`;
+                            origHtml += `<span style="color:#ff3333; font-weight:bold; border:1px solid rgba(255,51,51,0.3); padding:0 3px; border-radius:3px;">${raw[i]}</span>`;
+                            mutHtml += `<span style="color:#00ff80; font-weight:bold; border:1px solid rgba(0,255,128,0.5); padding:0 3px; border-radius:3px; text-shadow:0 0 8px #00ff80;">${mutated[i]}</span>`;
                         } else {
-                            origHtml += \`<span style="color:rgba(255,255,255,0.75);">\${raw[i]}</span>\`;
-                            mutHtml += \`<span style="color:rgba(255,255,255,0.75);">\${mutated[i]}</span>\`;
+                            origHtml += `<span style="color:rgba(255,255,255,0.75);">${raw[i]}</span>`;
+                            mutHtml += `<span style="color:rgba(255,255,255,0.75);">${mutated[i]}</span>`;
                         }
                     }
                     
@@ -1864,12 +1949,12 @@
                     feedbackDiv.style.background = "rgba(0, 255, 128, 0.1)";
                     feedbackDiv.style.border = "1px solid #00ff80";
                     feedbackDiv.style.color = "#00ff80";
-                    feedbackDiv.innerHTML = `<strong>🟢 ¡PROTOCOLO DE COMPRENSIÓN EXITOSO!</strong><br>\${feedbackText}`;
+                    feedbackDiv.innerHTML = `<strong>🟢 ¡PROTOCOLO DE COMPRENSIÓN EXITOSO!</strong><br>${feedbackText}`;
                 } else {
                     feedbackDiv.style.background = "rgba(255, 51, 51, 0.1)";
                     feedbackDiv.style.border = "1px solid #ff3333";
                     feedbackDiv.style.color = "#ff3333";
-                    feedbackDiv.innerHTML = `<strong>🔴 INCONSISTENCIA DE MEMORIA DETECTADA</strong><br>Opción incorrecta. Repasa el diagrama e inténtalo de nuevo.<br><br><em>Explicación:</em> \${feedbackText}`;
+                    feedbackDiv.innerHTML = `<strong>🔴 INCONSISTENCIA DE MEMORIA DETECTADA</strong><br>Opción incorrecta. Repasa el diagrama e inténtalo de nuevo.<br><br><em>Explicación:</em> ${feedbackText}`;
 
                     // Allow retry after 1.8 seconds by enabling buttons again
                     setTimeout(() => {

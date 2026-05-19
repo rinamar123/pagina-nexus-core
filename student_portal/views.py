@@ -1,13 +1,19 @@
+import json
+import re
+from functools import wraps
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from enrollment.models import Student, Course, Exam, ExamAttempt, CourseContent, InteractiveChallenge, ChallengeAttempt
-from notificaciones.models import Notification
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-from .models import LessonProgress, AssignmentSubmission
-from functools import wraps
+from enrollment.models import Student, Course, Exam, ExamAttempt, CourseContent, InteractiveChallenge, ChallengeAttempt
+from notificaciones.models import Notification, AdminNotification
+from email_service.services import send_password_changed_email
+from .models import LessonProgress, AssignmentSubmission, DiplomaRequest
 
 def check_password_change(view_func):
     @wraps(view_func)
@@ -102,6 +108,11 @@ def course_detail(request, pk):
         else:
             prev_content = contents[i - 1]
             content.is_unlocked = prev_content.id in completed_ids
+
+    # Validar que el curso tenga contenido
+    if not contents:
+        messages.warning(request, "Este curso aún no tiene lecciones disponibles.")
+        return redirect('student_dashboard')
 
     # Obtener el tema actual (por defecto el primero incompleto o el seleccionado)
     lesson_id = request.GET.get('lesson')
@@ -235,7 +246,6 @@ def course_detail(request, pk):
 @check_student_status
 def submit_challenge(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        import json
         data = json.loads(request.body)
         challenge_id = data.get('challenge_id')
         selected_index = data.get('selected_index')
@@ -269,6 +279,12 @@ def student_diploma(request, pk):
     course = get_object_or_404(Course, pk=pk)
     student = request.user.student
     
+    # Verify diploma has been approved by admin
+    diploma_req = DiplomaRequest.objects.filter(student=student, course=course, status='approved').first()
+    if not diploma_req:
+        messages.error(request, "ACCESO DENEGADO: El diploma para este curso requiere autorización del Administrador.")
+        return redirect('student_stats')
+
     # Verify course is fully completed
     contents = course.contents.all()
     total_lessons = contents.count()
@@ -276,7 +292,8 @@ def student_diploma(request, pk):
     
     if completed_count < total_lessons or total_lessons == 0:
         messages.error(request, "Aún no has completado todos los nodos para obtener tu diploma.")
-        return redirect('student_course_detail', pk=pk)
+        return redirect('student_stats')
+
 
     # Calculate extra credit
     # 0.1 for every lesson where ALL challenges are correctly solved
@@ -303,6 +320,33 @@ def student_diploma(request, pk):
 def take_exam(request, pk):
     course = get_object_or_404(Course, pk=pk)
     exam = course.exams.first()
+    
+    if request.method == 'POST':
+        correct_count = 0
+        total_questions = exam.questions.count()
+        
+        for question in exam.questions.all():
+            selected_option_id = request.POST.get(f'q_{question.id}')
+            if selected_option_id:
+                try:
+                    option = question.options.get(id=selected_option_id)
+                    if option.is_correct:
+                        correct_count += 1
+                except Exception:
+                    pass
+        
+        passed = (correct_count / total_questions >= 0.6) if total_questions > 0 else False
+        
+        attempt = ExamAttempt.objects.create(
+            student=request.user.student,
+            exam=exam,
+            score=correct_count,
+            total=total_questions,
+            passed=passed,
+            completed_at=timezone.now()
+        )
+        return redirect('exam_result', pk=pk, attempt_pk=attempt.pk)
+        
     return render(request, 'student_portal/examen.html', {'exam': exam, 'course': course})
 
 @login_required(login_url='student_login')
@@ -331,9 +375,6 @@ def student_update_profile(request):
         return redirect('student_dashboard')
         
     return render(request, 'student_portal/profile_edit.html', {'student': student})
-import re
-
-from email_service.services import send_password_changed_email
 
 @login_required(login_url='student_login')
 @check_student_status
@@ -379,8 +420,6 @@ def student_change_password(request):
     return render(request, 'student_portal/force_password_change.html')
 def student_enroll_course(request): return redirect('student_dashboard')
 
-from django.http import JsonResponse
-
 @login_required(login_url='student_login')
 def student_mark_read(request, pk):
     student = request.user.student
@@ -418,7 +457,6 @@ def student_delete_all_notifs(request):
 
 @login_required(login_url='student_login')
 def student_notifications_count(request):
-    from django.http import JsonResponse
     student = request.user.student
     count = student.unread_notifications.count()
     return JsonResponse({'count': count})
@@ -446,12 +484,29 @@ def student_stats(request):
         status = "APROBADO" if avg_grade >= 3.0 else "EN PROCESO"
         if not submissions.exists(): status = "SIN NOTAS"
 
+        exam = course.exams.first()
+        exam_passed = False
+        exam_grade = 0.0
+        if exam:
+            latest_attempt = ExamAttempt.objects.filter(student=student, exam=exam).order_by('-started_at').first()
+            if latest_attempt and latest_attempt.total > 0:
+                exam_grade = round((latest_attempt.score / latest_attempt.total) * 5.0, 1)
+                if exam_grade >= 3.0:
+                    exam_passed = True
+
+        is_eligible = (int(progress_pct) == 100 and exam_passed)
+        diploma_req = DiplomaRequest.objects.filter(student=student, course=course).first()
+        diploma_status = diploma_req.status if diploma_req else ('eligible' if is_eligible else 'not_eligible')
+
         course_stats.append({
             'course': course,
             'progress': int(progress_pct),
             'pending': 100 - int(progress_pct),
             'avg_grade': avg_grade,
             'status': status,
+            'diploma_status': diploma_status,
+            'exam_grade': exam_grade,
+            'exam_passed': exam_passed,
         })
         total_avg += avg_grade
 
@@ -463,8 +518,45 @@ def student_stats(request):
         'overall_avg': overall_avg
     })
 
-import json
-from django.views.decorators.csrf import csrf_exempt
+@login_required(login_url='student_login')
+@check_student_status
+def student_request_diploma(request, pk):
+    if request.method == 'POST':
+        student = request.user.student
+        course = get_object_or_404(Course, pk=pk)
+        
+        # Verify eligibility
+        total_lessons = course.contents.count()
+        completed_lessons = LessonProgress.objects.filter(student=student, lesson__course=course, completed=True).count()
+        progress_pct = (completed_lessons / total_lessons * 100) if total_lessons > 0 else 0
+        
+        exam = course.exams.first()
+        exam_passed = False
+        exam_grade = 0.0
+        if exam:
+            latest_attempt = ExamAttempt.objects.filter(student=student, exam=exam).order_by('-started_at').first()
+            if latest_attempt and latest_attempt.total > 0:
+                exam_grade = round((latest_attempt.score / latest_attempt.total) * 5.0, 1)
+                if exam_grade >= 3.0:
+                    exam_passed = True
+            
+        if progress_pct == 100 and exam_passed:
+            req, created = DiplomaRequest.objects.get_or_create(student=student, course=course)
+            if created:
+                # Create admin notification
+                AdminNotification.objects.create(
+                    title=f"Solicitud de Diploma: {student.name}",
+                    message=f"El estudiante {student.name} ha solicitado el diploma para el curso '{course.title}'. Calificación examen final: {exam_grade}/5.0",
+                    notif_type='diploma',
+                    link='/admin/' # Let's link it to admin panel dashboard
+                )
+                messages.success(request, "Solicitud de diploma enviada exitosamente. En espera de autorización del administrador.")
+            else:
+                messages.info(request, "Ya existe una solicitud de diploma en curso para este nodo.")
+        else:
+            messages.error(request, "Aún no cumples con los requisitos (100% progreso y calificación de examen final >= 3.0) para solicitar el diploma.")
+            
+    return redirect('student_stats')
 
 def get_unified_cognitive_response(message):
     msg_lower = message.lower()

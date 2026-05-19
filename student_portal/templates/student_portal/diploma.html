@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diploma - {{ course.title }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Outfit:wght@400;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+        body {
+            background: var(--dark-bg);
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(circle at 50% 50%, rgba(0, 242, 255, 0.05) 0%, transparent 70%);
+        }
+        .diploma {
+            width: 800px;
+            max-width: 90vw;
+            background: rgba(255,255,255,0.02);
+            border: 2px solid var(--neon-blue);
+            border-radius: 2rem;
+            padding: 4rem 3rem;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(0, 242, 255, 0.1), inset 0 0 60px rgba(0, 242, 255, 0.02);
+            position: relative;
+        }
+        .diploma::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px; right: -1px; bottom: -1px;
+            border-radius: 2rem;
+            border: 1px solid var(--neon-purple);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        .diploma h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0 0 1rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+        .diploma h2 {
+            font-size: 2rem;
+            color: white;
+            margin: 1.5rem 0;
+            font-weight: 300;
+        }
+        .diploma .student-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--neon-blue);
+            margin: 0.5rem 0;
+            text-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+        }
+        .diploma .course-title {
+            font-size: 1.8rem;
+            color: var(--neon-purple);
+            margin: 1rem 0;
+        }
+        .diploma .badge {
+            display: inline-block;
+            padding: 0.5rem 2rem;
+            border: 1px solid #00ff80;
+            border-radius: 2rem;
+            color: #00ff80;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 1rem 0;
+        }
+        .diploma .meta {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+        }
+        .diploma .meta span strong {
+            color: white;
+        }
+        .diploma .footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
+        }
+        @media (max-width: 600px) {
+            .diploma { padding: 2rem 1.5rem; }
+            .diploma h1 { font-size: 1.8rem; }
+            .diploma .student-name { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="diploma">
+        <h1>Diploma</h1>
+        <div class="badge">Completado</div>
+        <h2>Otorgado a</h2>
+        <div class="student-name">{{ student.name }}</div>
+        <p style="color:rgba(255,255,255,0.5); font-size:0.9rem;">Por haber completado exitosamente</p>
+        <div class="course-title">{{ course.title }}</div>
+        <div class="meta">
+            <span>Crédito Extra: <strong>{{ extra_credit }}</strong></span>
+            <span>Fecha: <strong>{{ date|date:"d/m/Y" }}</strong></span>
+        </div>
+        <div class="footer">
+            IA ACADEMY - Nexo Core &mdash; Plataforma Educativa de Inteligencia Artificial y Machine Learning
+        </div>
+    </div>
+</body>
+</html>

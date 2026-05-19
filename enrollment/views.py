@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
-from .models import Student, Course, CourseContent, Exam, CourseFile, Question, EnrollmentRequest
+from .models import Student, Course, CourseContent, Exam, CourseFile, EnrollmentRequest
 from notificaciones.models import Notification
 import json
 

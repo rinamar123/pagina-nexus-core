@@ -66,6 +66,13 @@
             letter-spacing: 2px;
         }
         .error { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.8rem; text-align: center; border: 1px solid rgba(255, 77, 77, 0.2); }
+
+        /* Responsive Media Queries */
+        @media (max-width: 480px) {
+            body { height: auto; padding: 2rem 1rem; }
+            .login-card { padding: 2rem 1.5rem; box-sizing: border-box; }
+            h1 { font-size: 1.8rem; }
+        }
     </style>
 </head>
 <body>
@@ -88,7 +95,12 @@
             </div>
             <button type="submit" class="btn">Autenticar Sistema</button>
         </form>
-        <div style="text-align: center; margin-top: 2rem;">
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <a href="{% url 'admin_signup' %}" style="color: var(--neon-blue); text-decoration: none; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;" onmouseover="this.style.textShadow='0 0 10px var(--neon-blue)'" onmouseout="this.style.textShadow='none'">
+                ⚡ Solicitar Acceso Administrativo
+            </a>
+        </div>
+        <div style="text-align: center; margin-top: 1.5rem;">
             <a href="{% url 'index' %}" style="color: rgba(255, 255, 255, 0.4); text-decoration: none; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); padding: 0.6rem 1.2rem; border-radius: 1rem; display: inline-block; transition: 0.3s;" onmouseover="this.style.borderColor='var(--neon-blue)'; this.style.color='var(--neon-blue)'; this.style.boxShadow='0 0 10px rgba(0,242,255,0.2)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'; this.style.color='rgba(255,255,255,0.4)'; this.style.boxShadow='none'">
                 🏠 Volver a la Página de Inicio
             </a>

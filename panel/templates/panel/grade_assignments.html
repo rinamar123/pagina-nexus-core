@@ -99,6 +99,29 @@
         .message-alert { padding: 1rem 1.5rem; border-radius: 0.8rem; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; }
         .message-alert.success { background: rgba(0, 255, 128, 0.1); border: 1px solid #00ff80; color: #00ff80; }
         .message-alert.error { background: rgba(255, 95, 86, 0.1); border: 1px solid #ff5f56; color: #ff5f56; }
+
+        /* Responsive Media Queries */
+        @media (max-width: 992px) {
+            body { flex-direction: column; }
+            .sidebar { 
+                width: 100%; 
+                height: auto; 
+                position: relative; 
+                padding: 1.5rem; 
+                border-right: none; 
+                border-bottom: 1px solid rgba(255,255,255,0.05); 
+                box-sizing: border-box;
+            }
+            .sidebar h2 { margin-bottom: 1rem !important; text-align: center; }
+            .sidebar nav { flex-direction: row !important; flex-wrap: wrap; gap: 0.8rem !important; height: auto !important; }
+            .sidebar nav a { flex: 1; min-width: 150px; text-align: center; margin-top: 0 !important; }
+            .sidebar nav a[style*="margin-top: auto"] { margin-top: 0.5rem !important; width: 100%; }
+            .main { padding: 1.5rem; box-sizing: border-box; }
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .pane-box { min-height: auto; padding: 1.2rem; }
+        }
     </style>
 </head>
 <body>

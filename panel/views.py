@@ -4,13 +4,13 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.contrib.auth.models import User
 from enrollment.models import Student, Course, EnrollmentRequest
-from notificaciones.models import Notification
-from student_portal.models import LessonProgress, AssignmentSubmission
+from notificaciones.models import Notification, AdminNotification
+from student_portal.models import LessonProgress, AssignmentSubmission, DiplomaRequest
+from panel.models import AdminRequest
 from email_service.services import send_student_welcome_email, send_enrollment_rejected_email, send_student_deleted_email, send_student_accepted_email, send_student_suspended_email
-from django.http import HttpResponse, JsonResponse
-import csv
-import string
-import random
+from django.http import JsonResponse
+from django.utils import timezone
+
 
 def is_admin(user):
     return user.is_authenticated and user.is_staff
@@ -71,12 +71,23 @@ def dashboard(request):
             'avg': avg
         })
 
-    # Estudiantes modificados recientemente (ordenados por fecha de actualización)
-    recently_modified = Student.objects.all().order_by('-updated_at')[:4]
+    # Estudiantes modificados recientemente (ordenados por fecha de actualización, excluyendo los quitados manualmente de la vista)
+    excluded_ids = request.session.get('excluded_recent_students', [])
+    recently_modified = Student.objects.exclude(id__in=excluded_ids).order_by('-updated_at')[:4]
 
     courses_count = courses.count()
     students_count = Student.objects.count()
     pending_count = EnrollmentRequest.objects.filter(status='pending').count()
+    
+    # Diploma Requests (both pending and all for records)
+    diploma_requests = DiplomaRequest.objects.all().order_by('-requested_at')
+    pending_diplomas_count = DiplomaRequest.objects.filter(status='pending').count()
+
+    # Admin Requests
+    admin_requests = AdminRequest.objects.all().order_by('-requested_at')
+    
+    # Active Admins list
+    active_admins = User.objects.filter(is_active=True, is_staff=True).order_by('username')
 
     return render(request, 'panel/dashboard.html', {
         'pending_requests': pending_requests,
@@ -88,9 +99,15 @@ def dashboard(request):
         'pending_count': pending_count,
         'course_metrics': course_metrics,
         'recently_modified': recently_modified,
+        'diploma_requests': diploma_requests,
+        'pending_diplomas_count': pending_diplomas_count,
+        'admin_requests': admin_requests,
+        'active_admins': active_admins,
     })
 
+
 @login_required(login_url='admin_login')
+@user_passes_test(is_admin, login_url='admin_login')
 def enrollment_accept(request, pk):
     enroll_req = get_object_or_404(EnrollmentRequest, pk=pk)
     student = enroll_req.student
@@ -128,6 +145,7 @@ def enrollment_accept(request, pk):
     return redirect('admin_dashboard')
 
 @login_required(login_url='admin_login')
+@user_passes_test(is_admin, login_url='admin_login')
 def enrollment_reject(request, pk):
     enroll_req = get_object_or_404(EnrollmentRequest, pk=pk)
     student = enroll_req.student
@@ -232,10 +250,12 @@ def student_delete(request, pk):
     return redirect('admin_dashboard')
 
 @login_required(login_url='admin_login')
+@user_passes_test(is_admin, login_url='admin_login')
 def notifications_view(request):
     return render(request, 'panel/notifications.html')
 
 @login_required(login_url='admin_login')
+@user_passes_test(is_admin, login_url='admin_login')
 def course_list(request):
     return render(request, 'panel/course_list.html')
 
@@ -336,3 +356,246 @@ def submit_grade(request, submission_id):
         messages.success(request, f'¡Calificación registrada con éxito para {submission.student.name}! Nota: {grade_float}/5.0')
         
     return redirect(request.META.get('HTTP_REFERER', 'admin_grade_assignments'))
+
+@login_required(login_url='admin_login')
+@user_passes_test(is_admin, login_url='admin_login')
+def admin_diploma_approve(request, pk):
+    req = get_object_or_404(DiplomaRequest, pk=pk)
+    req.status = 'approved'
+    req.approved_at = timezone.now()
+    req.save()
+    
+    # Notify Student
+    Notification.objects.create(
+        student=req.student,
+        title="Diploma Autorizado 🎓",
+        message=f"¡Felicidades! Tu diploma para el curso '{req.course.title}' ha sido autorizado. Ya puedes descargarlo en tu panel de estadísticas.",
+        notif_type='success'
+    )
+    
+    messages.success(request, f"Se ha aprobado la solicitud de diploma para {req.student.name} - {req.course.title}.")
+    return redirect('admin_dashboard')
+
+@login_required(login_url='admin_login')
+@user_passes_test(is_admin, login_url='admin_login')
+def admin_diploma_reject(request, pk):
+    req = get_object_or_404(DiplomaRequest, pk=pk)
+    req.status = 'rejected'
+    req.save()
+    
+    # Notify Student
+    Notification.objects.create(
+        student=req.student,
+        title="Solicitud de Diploma Rechazada ⚠️",
+        message=f"Tu solicitud de diploma para el curso '{req.course.title}' fue rechazada por el administrador. Contacta soporte para más información.",
+        notif_type='warning'
+    )
+    
+    messages.warning(request, f"Se ha rechazado la solicitud de diploma para {req.student.name} - {req.course.title}.")
+    return redirect('admin_dashboard')
+
+@login_required(login_url='admin_login')
+@user_passes_test(is_admin, login_url='admin_login')
+def admin_notifications_json(request):
+    notifications = AdminNotification.objects.all().order_by('-created_at')
+    data = []
+    for n in notifications:
+        data.append({
+            'id': n.id,
+            'title': n.title,
+            'message': n.message,
+            'notif_type': n.notif_type,
+            'is_read': n.is_read,
+            'created_at': n.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+        })
+    return JsonResponse({'notifications': data})
+
+@login_required(login_url='admin_login')
+@user_passes_test(is_admin, login_url='admin_login')
+def admin_mark_read_notification(request, pk):
+    n = get_object_or_404(AdminNotification, pk=pk)
+    n.is_read = True
+    n.save()
+    return JsonResponse({'success': True})
+
+@login_required(login_url='admin_login')
+@user_passes_test(is_admin, login_url='admin_login')
+def admin_delete_notification(request, pk):
+    n = get_object_or_404(AdminNotification, pk=pk)
+    n.delete()
+    return JsonResponse({'success': True})
+
+@login_required(login_url='admin_login')
+@user_passes_test(is_admin, login_url='admin_login')
+def admin_clear_all_notifications(request):
+    AdminNotification.objects.all().delete()
+    return JsonResponse({'success': True})
+
+
+def admin_signup(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('admin_dashboard')
+        
+    if request.method == 'POST':
+        u = request.POST.get('username')
+        email = request.POST.get('email')
+        p = request.POST.get('password')
+        pc = request.POST.get('password_confirm')
+        
+        # Validations
+        if p != pc:
+            return render(request, 'panel/admin_signup.html', {
+                'error_msg': 'Las contraseñas no coinciden.',
+                'prefill_username': u,
+                'prefill_email': email
+            })
+        if len(p) < 8:
+            return render(request, 'panel/admin_signup.html', {
+                'error_msg': 'La contraseña debe tener al menos 8 caracteres.',
+                'prefill_username': u,
+                'prefill_email': email
+            })
+        if User.objects.filter(username=u).exists():
+            return render(request, 'panel/admin_signup.html', {
+                'error_msg': 'El nombre de usuario ya está registrado en el sistema.',
+                'prefill_username': u,
+                'prefill_email': email
+            })
+        if User.objects.filter(email=email).exists():
+            return render(request, 'panel/admin_signup.html', {
+                'error_msg': 'La dirección de correo electrónico ya está registrada.',
+                'prefill_username': u,
+                'prefill_email': email
+            })
+            
+        # Create Inactive user
+        user = User.objects.create_user(username=u, email=email, password=p)
+        user.is_active = False
+        user.is_staff = True
+        user.is_superuser = True
+        user.save()
+        
+        # Create AdminRequest
+        admin_req = AdminRequest.objects.create(user=user)
+        
+        # Get client IP
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        admin_req.ip_address = ip
+        admin_req.save()
+        
+        # Create AdminNotification
+        verify_url = f"/admin/solicitudes-admin/verificar/{admin_req.token}/"
+        AdminNotification.objects.create(
+            title="Nueva Solicitud de Acceso Admin 🛡️",
+            message=f"El usuario '{u}' ({email}) solicita acceso administrativo. Haga clic para verificar: {verify_url}",
+            notif_type='warning'
+        )
+        
+        return render(request, 'panel/admin_signup.html', {
+            'success_msg': 'Su solicitud de acceso administrativo ha sido registrada. Se ha enviado el token de verificación al Administrador Principal.'
+        })
+        
+    return render(request, 'panel/admin_signup.html')
+
+
+@login_required(login_url='admin_login')
+@user_passes_test(is_admin, login_url='admin_login')
+def admin_request_verify(request, token):
+    req = get_object_or_404(AdminRequest, token=token)
+    
+    if req.is_approved:
+        messages.warning(request, f"La solicitud de {req.user.username} ya había sido aprobada previamente.")
+        return redirect('admin_dashboard')
+        
+    # Approve request
+    req.is_approved = True
+    req.save()
+    
+    # Activate User
+    req.user.is_active = True
+    req.user.save()
+    
+    messages.success(request, f"Acceso administrativo para {req.user.username} habilitado con éxito. Ahora puede iniciar sesión.")
+    return redirect('admin_dashboard')
+
+
+@login_required(login_url='admin_login')
+@user_passes_test(is_admin, login_url='admin_login')
+def admin_request_reject(request, token):
+    req = get_object_or_404(AdminRequest, token=token)
+    username = req.user.username
+    
+    # Mark as rejected (no deletion to keep audit proof)
+    req.is_approved = False
+    req.is_rejected = True
+    req.save()
+    
+    # Ensure user stays inactive
+    req.user.is_active = False
+    req.user.save()
+    
+    messages.warning(request, f"Se ha denegado la solicitud de acceso de {username}. Se conservan los registros como prueba.")
+    return redirect('admin_dashboard')
+
+
+@login_required(login_url='admin_login')
+@user_passes_test(is_admin, login_url='admin_login')
+def download_database(request):
+    import zipfile
+    import os
+    from io import BytesIO
+    from django.http import HttpResponse
+    from django.core.serializers import serialize
+    from django.conf import settings
+    
+    # Create an in-memory zip file
+    buffer = BytesIO()
+    with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        # 1. Serialize models to JSON
+        models_to_backup = [
+            (User, 'users.json'),
+            (Student, 'students.json'),
+            (Course, 'courses.json'),
+            (EnrollmentRequest, 'enrollment_requests.json'),
+            (DiplomaRequest, 'diploma_requests.json'),
+            (AdminRequest, 'admin_requests.json'),
+            (AssignmentSubmission, 'assignment_submissions.json'),
+            (LessonProgress, 'lesson_progress.json'),
+        ]
+        
+        for model, filename in models_to_backup:
+            try:
+                data = serialize('json', model.objects.all(), indent=2)
+                zip_file.writestr(filename, data)
+            except Exception as e:
+                zip_file.writestr(f"error_{filename}", f"Error serializing {model.__name__}: {str(e)}")
+
+        # 2. Add raw SQLite database if it exists
+        sqlite_path = settings.DATABASES['default'].get('NAME')
+        if sqlite_path and os.path.exists(sqlite_path):
+            try:
+                zip_file.write(sqlite_path, arcname='db.sqlite3')
+            except Exception as e:
+                zip_file.writestr('sqlite_error.txt', f"Error backing up sqlite file: {str(e)}")
+
+    buffer.seek(0)
+    response = HttpResponse(buffer.read(), content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename="nexus_core_backup.zip"'
+    return response
+
+def exclude_recent_student(request, student_id):
+    if not (request.user.is_authenticated and request.user.is_staff):
+        return redirect('admin_login')
+    
+    if request.method == 'POST':
+        excluded = request.session.get('excluded_recent_students', [])
+        if student_id not in excluded:
+            excluded.append(student_id)
+            request.session['excluded_recent_students'] = excluded
+            request.session.modified = True
+            
+    return redirect('admin_dashboard')

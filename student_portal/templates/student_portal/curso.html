@@ -448,6 +448,152 @@
             box-shadow: 0 4px 20px rgba(255, 0, 0, 0.4);
             transform: scale(1.02);
         }
+
+        /* ================= NEW INTERACTIVE CLASS DEMO ================= */
+        .interactive-class-section {
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            margin-top: 4.5rem;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+            text-align: left;
+            position: relative;
+            z-index: 10;
+            border-left: 4px solid var(--neon-blue);
+            transition: border-color 0.4s ease;
+        }
+
+        .demo-header {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .demo-title-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .demo-title {
+            font-family: 'Space Grotesk', 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            color: white;
+            letter-spacing: 2px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .demo-panel-right {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.2);
+            gap: 1.5rem;
+        }
+
+        .challenge-prompt {
+            font-family: 'Outfit', sans-serif;
+            color: var(--neon-blue);
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            letter-spacing: 0.5px;
+        }
+
+        .code-box-interactive {
+            font-family: 'Courier New', Courier, monospace;
+            background: #06060a;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            padding: 1.2rem;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .interactive-code-line {
+            display: block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 0.4rem;
+            border-left: 3px solid transparent;
+            color: #d1ffd6;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: pre;
+        }
+
+        .interactive-code-line:hover {
+            background: rgba(0, 242, 255, 0.08);
+            border-left-color: var(--neon-blue);
+            color: white;
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.05);
+        }
+
+        .interactive-code-line.wrong-clicked {
+            background: rgba(255, 51, 51, 0.12) !important;
+            border-left-color: #ff3333 !important;
+            color: #ff9999 !important;
+        }
+
+        .interactive-code-line.correct-clicked {
+            background: rgba(0, 255, 128, 0.12) !important;
+            border-left-color: #00ff80 !important;
+            color: #a3ffcf !important;
+        }
+
+        .feedback-box {
+            min-height: 75px;
+            border-radius: 0.8rem;
+            padding: 1rem;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            display: none;
+            animation: fadeInLog 0.3s ease-out;
+            border: 1px solid transparent;
+        }
+
+        .feedback-box.success {
+            display: block;
+            background: rgba(0, 255, 128, 0.08);
+            border-color: #00ff80;
+            color: #00ff80;
+            box-shadow: 0 0 15px rgba(0, 255, 128, 0.1);
+        }
+
+        .feedback-box.error {
+            display: block;
+            background: rgba(255, 51, 51, 0.08);
+            border-color: #ff3333;
+            color: #ff3333;
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.1);
+        }
+
+        .console-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 7px;
+        }
+        .console-dot.red { background: #ff5f56; }
+        .console-dot.yellow { background: #ffbd2e; }
+        .console-dot.green { background: #27c93f; }
+
+        @keyframes fadeInLog {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 
@@ -649,6 +795,172 @@
             <article class="cyber-content">
                 {{ current_lesson.content|safe }}
             </article>
+
+            <!-- EJEMPLOS PRÁCTICOS PASO A PASO -->
+            <div class="practical-examples-section" style="margin-top: 4rem; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); border-left: 4px solid var(--course-neon); border-radius: 1.5rem; padding: 2.5rem;">
+                <h3 style="color: var(--course-neon); font-family: 'Outfit'; font-size: 1.4rem; margin-top: 0; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px rgba(var(--course-neon), 0.3);">
+                    🛠️ Guía Práctica Paso a Paso
+                </h3>
+                <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.6); margin-bottom: 2rem;">
+                    Sigue esta guía detallada paso a paso para consolidar la implementación práctica de esta unidad en tu entorno local.
+                </p>
+
+                {% if course.id == 4 %}
+                <!-- Redes Neuronales -->
+                <div class="step-guide">
+                    <div style="margin-bottom: 1.5rem;">
+                        <strong style="color: var(--neon-blue); display: block; margin-bottom: 0.5rem;">Paso 1: Configurar la Entrada de Datos</strong>
+                        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.75); margin: 0; line-height: 1.6;">
+                            Prepara la matriz de entrada con NumPy. Define tus variables independientes de entrada (X) y los pesos (W), inicializando el sesgo (bias):
+                        </p>
+                        <div class="code-box">import numpy as np
+
+# Datos de entrada (4 ejemplos, 3 características cada uno)
+X = np.array([[0, 0, 1],
+              [1, 1, 1],
+              [1, 0, 1],
+              [0, 1, 1]])
+
+# Inicializar pesos aleatoriamente con media 0
+np.random.seed(1)
+W = 2 * np.random.random((3, 1)) - 1
+bias = 0.0</div>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <strong style="color: var(--neon-blue); display: block; margin-bottom: 0.5rem;">Paso 2: Calcular la Combinación Lineal y Activación ReLU</strong>
+                        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.75); margin: 0; line-height: 1.6;">
+                            Multiplica la matriz de entrada por los pesos correspondientes y añade el sesgo. Luego, pasa el resultado a través de la función de activación ReLU:
+                        </p>
+                        <div class="code-box"># Combinación lineal
+z = np.dot(X, W) + bias
+
+# Función de activación ReLU
+def relu(x):
+    return np.maximum(0, x)
+
+activacion = relu(z)
+print("Salida de Activación:", activacion)</div>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <strong style="color: var(--neon-blue); display: block; margin-bottom: 0.5rem;">Paso 3: Propagación y Ajuste de Errores</strong>
+                        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.75); margin: 0; line-height: 1.6;">
+                            Calcula el error comparando las predicciones obtenidas con las etiquetas reales deseadas y realiza el ajuste por gradiente para optimizar los pesos:
+                        </p>
+                        <div class="code-box"># Etiquetas esperadas (Y)
+Y = np.array([[0], [1], [1], [0]])
+
+# Calcular error cuadrático
+error = Y - activacion
+ajuste = error * (z > 0) # Derivada de ReLU
+
+# Actualización simple de pesos (Tasa de aprendizaje = 0.1)
+W += np.dot(X.T, ajuste) * 0.1
+print("Pesos Optimizados:\n", W)</div>
+                    </div>
+                </div>
+
+                {% elif course.id == 5 %}
+                <!-- Regresión Lineal -->
+                <div class="step-guide">
+                    <div style="margin-bottom: 1.5rem;">
+                        <strong style="color: var(--neon-purple); display: block; margin-bottom: 0.5rem;">Paso 1: Estructurar Variables y Pendientes</strong>
+                        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.75); margin: 0; line-height: 1.6;">
+                            Define el conjunto de datos de entrenamiento (X representa años de experiencia y Y representa el salario real). Declara la pendiente y la ordenada al origen de forma inicial:
+                        </p>
+                        <div class="code-box">import numpy as np
+
+# Años de experiencia (X) y salarios reales en miles (Y)
+X = np.array([1, 2, 3, 4, 5])
+Y = np.array([15, 28, 40, 48, 62])
+
+# Inicializar pendiente (m) e intercepto (b)
+m = 10.0
+b = 5.0</div>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <strong style="color: var(--neon-purple); display: block; margin-bottom: 0.5rem;">Paso 2: Calcular Ecuación Predictiva (Recta de Regresión)</strong>
+                        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.75); margin: 0; line-height: 1.6;">
+                            Evalúa la ecuación predictiva para cada valor de entrada para trazar la línea de regresión que mejor se ajuste a la distribución de puntos históricos:
+                        </p>
+                        <div class="code-box"># Predicción lineal: y = mx + b
+Y_pred = m * X + b
+print("Salarios estimados:", Y_pred)</div>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <strong style="color: var(--neon-purple); display: block; margin-bottom: 0.5rem;">Paso 3: Optimización mediante MSE (Error Cuadrático Medio)</strong>
+                        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.75); margin: 0; line-height: 1.6;">
+                            Mide la distancia al cuadrado de la desviación entre cada estimación calculada y su contraparte real, y actualiza los parámetros para minimizar el error total:
+                        </p>
+                        <div class="code-box"># Calcular Error Cuadrático Medio
+mse = np.mean((Y - Y_pred) ** 2)
+print(f"Error Cuadrático Medio inicial: {mse:.2f}")
+
+# Simulación de un paso de gradiente descendente simple para ajustar coeficientes
+lr = 0.01
+error = Y_pred - Y
+grad_m = 2 * np.mean(error * X)
+grad_b = 2 * np.mean(error)
+
+m -= lr * grad_m
+b -= lr * grad_b
+print(f"Nuevos coeficientes optimizados -> Pendiente: {m:.2f}, Intercepto: {b:.2f}")</div>
+                    </div>
+                </div>
+
+                {% else %}
+                <!-- Algoritmos Genéticos -->
+                <div class="step-guide">
+                    <div style="margin-bottom: 1.5rem;">
+                        <strong style="color: #00ff80; display: block; margin-bottom: 0.5rem;">Paso 1: Modelar Cromosomas de Padres</strong>
+                        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.75); margin: 0; line-height: 1.6;">
+                            Define la población base mediante cadenas binarias y evalúa la aptitud (fitness) de cada una para determinar qué tan cerca están de la solución perfecta:
+                        </p>
+                        <div class="code-box"># Cromosomas de ejemplo (cadenas binarias de longitud 8)
+padre1 = [1, 0, 1, 1, 0, 1, 0, 0]
+padre2 = [0, 1, 1, 0, 1, 1, 1, 1]
+
+# Evaluar aptitud (fitness): contar cantidad de unos
+def evaluar_fitness(individuo):
+    return sum(individuo)
+
+print("Aptitud Padre 1:", evaluar_fitness(padre1))
+print("Aptitud Padre 2:", evaluar_fitness(padre2))</div>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <strong style="color: #00ff80; display: block; margin-bottom: 0.5rem;">Paso 2: Operador de Cruzamiento (Crossover Cromosómico)</strong>
+                        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.75); margin: 0; line-height: 1.6;">
+                            Aplica el operador de recombinación genética. Elige un punto de corte aleatorio y crea un nuevo descendiente uniendo el ADN de ambos progenitores:
+                        </p>
+                        <div class="code-box"># Punto de corte medio
+punto_corte = 4
+
+# Crear descendencia (Crossover)
+hijo = padre1[:punto_corte] + padre2[punto_corte:]
+print("Genotipo del Hijo recombinado:", hijo)</div>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <strong style="color: #00ff80; display: block; margin-bottom: 0.5rem;">Paso 3: Mutación Aleatoria de Genes</strong>
+                        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.75); margin: 0; line-height: 1.6;">
+                            Simula una alteración genética aplicando una probabilidad de mutación aleatoria. Invierte el valor del gen si el umbral es superado:
+                        </p>
+                        <div class="code-box">import random
+
+# Tasa de mutación del 10%
+tasa_mutacion = 0.1
+
+def mutar(individuo):
+    for i in range(len(individuo)):
+        if random.random() < tasa_mutacion:
+            individuo[i] = 1 - individuo[i] # Inversión de bit
+    return individuo
+
+hijo_mutado = mutar(hijo)
+print("Genotipo del Hijo tras fase de mutación:", hijo_mutado)</div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
 
 
 
@@ -914,6 +1226,8 @@
                 }
             });
         }
+
+
     </script>
 </body>
 </html>
