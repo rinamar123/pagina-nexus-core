@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA ACADEMY | El Futuro del Machine Learning</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2103/2103633.png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Outfit:wght@400;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-purple: #bc13fe;
+            --neon-pink: #ff00e6;
+            --dark-bg: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(188, 19, 254, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 242, 255, 0.1) 0%, transparent 40%);
+        }
+
+        /* Animated Grid Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+            mask-image: radial-gradient(ellipse at center, black, transparent 80%);
+        }
+
+        /* Floating particles effect (css only) */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        nav {
+            padding: 1.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .btn-cyber {
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.8rem;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-student {
+            background: rgba(0, 242, 255, 0.1);
+            color: var(--neon-blue);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
+        }
+
+        .btn-student:hover {
+            background: var(--neon-blue);
+            color: var(--dark-bg);
+            box-shadow: 0 0 25px var(--neon-blue);
+            transform: translateY(-2px);
+        }
+
+        .btn-admin {
+            background: rgba(188, 19, 254, 0.1);
+            color: var(--neon-purple);
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 15px rgba(188, 19, 254, 0.1);
+        }
+
+        .btn-admin:hover {
+            background: var(--neon-purple);
+            color: white;
+            box-shadow: 0 0 25px var(--neon-purple);
+            transform: translateY(-2px);
+        }
+
+        header {
+            padding: 6rem 0;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(3rem, 10vw, 6rem);
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--neon-blue), #fff, var(--neon-purple));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 5s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .hero-tagline {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-bottom: 3rem;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 4rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cyberpunk Card */
+        .cyber-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 2rem;
+            padding: 3rem;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .cyber-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 2rem;
+            background: linear-gradient(45deg, transparent, rgba(0, 242, 255, 0.05), transparent);
+            pointer-events: none;
+        }
+
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-title span {
+            color: var(--neon-blue);
+        }
+
+        /* Animated Course Cards */
+        .course-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .course-card {
+            flex: 0 1 calc(50% - 1rem);
+            min-width: 280px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .course-card:hover {
+            transform: scale(1.05) translateY(-10px);
+            border-color: var(--neon-blue);
+            box-shadow: 0 10px 30px rgba(0, 242, 255, 0.2);
+        }
+
+        .course-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0);
+            }
+
+            50% {
+                transform: translateY(-10px) rotate(5deg);
+            }
+        }
+
+        .course-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .course-meta {
+            font-size: 0.8rem;
+            color: var(--neon-blue);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Magnetic Button */
+        .magnetic-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: transparent;
+            border: 2px solid var(--neon-blue);
+            border-radius: 1rem;
+            color: var(--neon-blue);
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: 0.4s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .magnetic-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--neon-blue);
+            transition: 0.4s;
+            z-index: -1;
+        }
+
+        .magnetic-btn:hover {
+            color: var(--dark-bg);
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+
+        .magnetic-btn:hover::before {
+            left: 0;
+        }
+
+        /* Dropdown Styles */
+        select {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            color: white;
+            font-family: inherit;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+            transition: 0.3s;
+        }
+
+        select:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+        }
+
+        select option {
+            background-color: #050505;
+            color: white;
+        }
+
+        #cyber-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .hero-desc {
+            max-width: 700px;
+            margin: 0 auto 3rem auto;
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Space Grotesk', sans-serif;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .metrics {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 3.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .metric-item {
+            text-align: center;
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            padding: 1.2rem 2rem;
+            border-radius: 1.2rem;
+            min-width: 160px;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.01);
+            transition: all 0.3s ease;
+        }
+
+        .metric-item:hover {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 15px rgba(188, 19, 254, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .metric-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--neon-purple);
+            display: block;
+            margin-bottom: 0.3rem;
+            text-shadow: 0 0 10px rgba(188, 19, 254, 0.3);
+        }
+
+        .metric-label {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+        }
+
+        input,
+        select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 1rem;
+            color: white;
+            border-radius: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--neon-blue);
+            background: rgba(0, 242, 255, 0.05);
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            display: none;
+            border: 1px solid transparent;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .message.success {
+            background: rgba(0, 255, 128, 0.05);
+            border-color: #00ff80;
+            color: #00ff80;
+        }
+
+        footer {
+            padding: 4rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+        }
+
+        /* ================= NEURAL PROTOCOLS SECTION ================= */
+        .protocols-section {
+            margin-top: 6rem;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .protocols-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .protocol-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 2rem;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .protocol-card:hover {
+            border-color: var(--neon-purple);
+            box-shadow: 0 10px 40px rgba(188, 19, 254, 0.15);
+            transform: translateY(-8px);
+        }
+
+        .protocol-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            filter: drop-shadow(0 0 12px rgba(188, 19, 254, 0.5));
+        }
+
+        .protocol-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .protocol-desc {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <!-- Interactive Canvas for Mouse Particle Trail & Background Network Nodes -->
+    <canvas id="cyber-canvas"></canvas>
+
+    <div class="container">
+        <nav>
+            <div class="logo">IA NETWORK</div>
+            <div class="nav-actions">
+                <a href="#cursos" class="btn-cyber"
+                    style="color: rgba(255,255,255,0.5); border: none; background: none;">Nodos</a>
+                <a href="{% url 'student_login' %}" class="btn-cyber btn-student">
+                    <span>👤</span> Estudiantes
+                </a>
+                <a href="{% url 'admin_login' %}" class="btn-cyber btn-admin">
+                    <span>⚙️</span> Nexus Admin
+                </a>
+            </div>
+        </nav>
+
+        <header style="position: relative; z-index: 10;">
+            <p class="hero-tagline">Neural Synthesis Protocol</p>
+            <h1 class="hero-title">Intelligence</h1>
+            
+            <!-- Added small text description about AI / Machine Learning platform -->
+            <p class="hero-desc">
+                Portal avanzado de sincronización y entrenamiento neuronal. Domina modelos de Inteligencia Artificial,
+                algoritmos genéticos y regresiones mediante emuladores de consola en tiempo real. 
+                Interactúa con el Nexus Core para liberar tu potencial algorítmico.
+            </p>
+
+            <!-- Expanded metrics with dynamic figures about the courses/platform -->
+            <div class="metrics">
+                <div class="metric-item">
+                    <span class="metric-value">99.9%</span>
+                    <span class="metric-label">Uptime de Red</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-value">0.1ms</span>
+                    <span class="metric-label">Latencia</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-value">1,240+</span>
+                    <span class="metric-label">Sincronizados</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-value">100%</span>
+                    <span class="metric-label">Interactividad</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-layout">
+            <div class="courses-section" id="cursos">
+                <h2 class="section-title">Nodos de <span>Conocimiento</span></h2>
+                <div class="course-grid">
+                    {% for course in courses %}
+                    <div class="course-card" onclick="location.href='{% url 'enrollment_course_detail' course.id %}'">
+                        <div class="course-icon">{{ course.icon }}</div>
+                        <div class="course-title">{{ course.title }}</div>
+                        <div class="course-meta">{{ course.duration }}</div>
+                        <p style="margin-top: 1rem; font-size: 0.85rem; color: rgba(255,255,255,0.5);">Haz clic para
+                            expandir protocolo.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="enrollment-sidebar">
+                <div class="cyber-card">
+                    <h2 style="font-family: 'Outfit', sans-serif; margin-bottom: 1.5rem;">Join the Network</h2>
+                    <div id="message" class="message"></div>
+                    <form id="enrollmentForm">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Identidad Digital</label>
+                            <input type="text" name="name" placeholder="Nombre completo" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nodo de Comunicación</label>
+                            <input type="email" name="email" placeholder="email@nexus.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Algoritmo Objetivo (Curso)</label>
+                            <div style="position: relative;">
+                                <select name="course_id" required style="padding-right: 3rem;">
+                                    <option value="" disabled selected>Selecciona tu curso</option>
+                                    {% for course in courses %}
+                                    <option value="{{ course.id }}">{{ course.title }}</option>
+                                    {% endfor %}
+                                </select>
+                                <span style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--neon-blue); font-size: 0.8rem;">▼</span>
+                            </div>
+                        </div>
+                        <button type="submit" class="magnetic-btn">Iniciar Sincronización</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= NEURAL PROTOCOLS SECTION ================= -->
+        <div class="protocols-section">
+            <h2 class="section-title">Protocolos del <span>Sistema</span></h2>
+            <div class="protocols-grid">
+                <div class="protocol-card">
+                    <div class="protocol-icon">⚡</div>
+                    <h3 class="protocol-title">Sandbox Python Integrado</h3>
+                    <p class="protocol-desc">Pon a prueba tu código al instante. Ejecuta algoritmos y scripts de Machine Learning directamente desde nuestro emulador de terminal interactiva en el navegador.</p>
+                </div>
+                <div class="protocol-card">
+                    <div class="protocol-icon">🛡️</div>
+                    <h3 class="protocol-title">Seguridad Criptográfica</h3>
+                    <p class="protocol-desc">Protección perimetral de primer nivel. Acceso restringido con políticas de seguridad avanzadas y actualización forzada de contraseñas desde el primer inicio.</p>
+                </div>
+                <div class="protocol-card">
+                    <div class="protocol-icon">📊</div>
+                    <h3 class="protocol-title">Métricas de Rendimiento</h3>
+                    <p class="protocol-desc">Monitorea tu aprendizaje con barras de avance de lecciones interactivos y un historial académico detallado con GPA en la escala de 0.0 a 5.0.</p>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <footer>
+        &copy; 2026 NEURAL SYNTHESIS LABS. ALL DATA ENCRYPTED.
+    </footer>
+
+    <script>
+        document.getElementById('enrollmentForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const btn = this.querySelector('.magnetic-btn');
+            btn.textContent = 'CONNECTING...';
+
+            const formData = new FormData(this);
+            fetch('{% url "index" %}', {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const msg = document.getElementById('message');
+                    msg.style.display = 'block';
+                    if (data.status === 'success') {
+                        msg.className = 'message success';
+                        msg.textContent = data.message;
+                        this.reset();
+                    } else {
+                        msg.className = 'message error';
+                        msg.textContent = data.message;
+                    }
+                })
+                .finally(() => {
+                    btn.textContent = 'Iniciar Sincronización';
+                });
+        });
+    </script>
+
+    <!-- Canvas Interactive Particles & Mouse Trail Script -->
+    <script>
+        (function() {
+            const canvas = document.getElementById('cyber-canvas');
+            const ctx = canvas.getContext('2d');
+
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            const particles = [];
+            const mouse = { x: null, y: null, lastMove: 0 };
+
+            window.addEventListener('mousemove', (e) => {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+                mouse.lastMove = Date.now();
+
+                // Spawn neon cursor trail dots
+                for (let i = 0; i < 2; i++) {
+                    particles.push(new TrailParticle(mouse.x, mouse.y));
+                }
+            });
+
+            window.addEventListener('mouseleave', () => {
+                mouse.x = null;
+                mouse.y = null;
+            });
+
+            class TrailParticle {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    this.size = Math.random() * 3 + 1.5;
+                    this.vx = (Math.random() - 0.5) * 1.5;
+                    this.vy = (Math.random() - 0.5) * 1.5;
+                    // Neon cyan or neon magenta color choice
+                    this.color = Math.random() > 0.45 ? '#00f2ff' : '#ff00e6';
+                    this.alpha = 1.0;
+                    this.decay = Math.random() * 0.02 + 0.015;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.alpha -= this.decay;
+                }
+
+                draw() {
+                    ctx.save();
+                    ctx.globalAlpha = this.alpha;
+                    ctx.fillStyle = this.color;
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
+
+            // Drifting background network nodes
+            const networkNodes = [];
+            const nodeCount = Math.min(65, Math.floor((width * height) / 22000));
+            
+            for (let i = 0; i < nodeCount; i++) {
+                networkNodes.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4,
+                    radius: Math.random() * 1.8 + 0.8,
+                    color: Math.random() > 0.5 ? '#bc13fe' : '#00f2ff'
+                });
+            }
+
+            function drawNetwork() {
+                // Update and draw floating nodes
+                networkNodes.forEach(node => {
+                    node.x += node.vx;
+                    node.y += node.vy;
+
+                    // Screen wrapping/bouncing
+                    if (node.x < 0) node.x = width;
+                    if (node.x > width) node.x = 0;
+                    if (node.y < 0) node.y = height;
+                    if (node.y > height) node.y = 0;
+
+                    // Gentle pull toward mouse cursor if near
+                    if (mouse.x !== null) {
+                        const dx = mouse.x - node.x;
+                        const dy = mouse.y - node.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 180) {
+                            // Subtle magnetic attraction
+                            node.x += dx * 0.012;
+                            node.y += dy * 0.012;
+                        }
+                    }
+
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = node.color === '#bc13fe' ? 'rgba(188, 19, 254, 0.4)' : 'rgba(0, 242, 255, 0.4)';
+                    ctx.fill();
+                });
+
+                // Connect adjacent nodes
+                for (let i = 0; i < networkNodes.length; i++) {
+                    for (let j = i + 1; j < networkNodes.length; j++) {
+                        const n1 = networkNodes[i];
+                        const n2 = networkNodes[j];
+                        const dx = n1.x - n2.x;
+                        const dy = n1.y - n2.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < 110) {
+                            ctx.beginPath();
+                            ctx.moveTo(n1.x, n1.y);
+                            ctx.lineTo(n2.x, n2.y);
+                            // Glow lines between connections
+                            ctx.strokeStyle = `rgba(0, 242, 255, ${0.12 * (1 - dist / 110)})`;
+                            ctx.lineWidth = 0.55;
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+
+                // Draw network grid
+                drawNetwork();
+
+                // Update and draw mouse trail particles
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.update();
+                    if (p.alpha <= 0) {
+                        particles.splice(i, 1);
+                    } else {
+                        p.draw();
+                    }
+                }
+
+                // Draw thin connections between active cursor trail particles
+                if (particles.length > 2) {
+                    ctx.beginPath();
+                    ctx.moveTo(particles[0].x, particles[0].y);
+                    for (let i = 1; i < particles.length; i++) {
+                        const p1 = particles[i - 1];
+                        const p2 = particles[i];
+                        const dist = Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+                        if (dist < 80) {
+                            ctx.lineTo(p2.x, p2.y);
+                        } else {
+                            ctx.moveTo(p2.x, p2.y);
+                        }
+                    }
+                    ctx.strokeStyle = 'rgba(0, 242, 255, 0.05)';
+                    ctx.lineWidth = 0.8;
+                    ctx.stroke();
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+
+
+            animate();
+        })();
+    </script>
+</body>
+
+</html>

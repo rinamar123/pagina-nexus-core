@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sincronización de Usuario - IA Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #050505;
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--dark-bg); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0;
+            color: white;
+            background-image: radial-gradient(circle at center, rgba(0, 242, 255, 0.05) 0%, transparent 70%);
+        }
+        .login-card { 
+            background: rgba(255,255,255,0.03); 
+            padding: 3rem; 
+            border-radius: 2rem; 
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            width: 100%; 
+            max-width: 400px; 
+            box-shadow: 0 0 50px rgba(188, 19, 254, 0.1);
+        }
+        h1 { 
+            text-align: center; 
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem; 
+        }
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--neon-purple); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        input { 
+            width: 100%; 
+            padding: 1rem; 
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1rem; 
+            color: white;
+            outline: none;
+            transition: all 0.3s;
+        }
+        input:focus { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(188, 19, 254, 0.2); }
+        .btn { 
+            width: 100%; 
+            padding: 1rem; 
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
+            color: white; 
+            border: none; 
+            border-radius: 1rem; 
+            font-weight: 700; 
+            cursor: pointer; 
+            margin-top: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .error { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.8rem; text-align: center; border: 1px solid rgba(255, 77, 77, 0.2); }
+        .back { display: block; text-align: center; margin-top: 1.5rem; color: rgba(255,255,255,0.3); text-decoration: none; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h1>USER ACCESS</h1>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>ID de Usuario</label>
+                <input type="text" name="username" required>
+            </div>
+            <div class="form-group">
+                <label>Llave de Acceso</label>
+                <input type="password" name="password" required>
+            </div>
+            <button type="submit" class="btn">Entrar a la Red</button>
+        </form>
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <a href="{% url 'password_reset' %}" style="color: var(--neon-blue); text-decoration: none; font-size: 0.8rem; font-weight: 600;">¿Olvidaste tu contraseña?</a>
+        </div>
+        <a href="{% url 'index' %}" class="back">← Volver al Portal Público</a>
+    </div>
+</body>
+</html>

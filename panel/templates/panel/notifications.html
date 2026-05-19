@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Notificaciones - Panel de Control</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            margin: 0;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.01);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 3rem 1.5rem;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .sidebar h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--neon-blue);
+            font-size: 1.5rem;
+            margin: 0 0 2rem;
+        }
+
+        .sidebar a {
+            display: block;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            padding: 0.8rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.3rem;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: var(--glass);
+            color: white;
+        }
+
+        .main {
+            flex: 1;
+            padding: 3rem;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .info {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Media Queries */
+        @media (max-width: 992px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 1.5rem;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                box-sizing: border-box;
+            }
+
+            .sidebar h2 {
+                margin-bottom: 1rem !important;
+                text-align: center;
+            }
+
+            .sidebar nav,
+            .sidebar {
+                display: flex;
+                flex-direction: row !important;
+                flex-wrap: wrap;
+                gap: 0.8rem !important;
+            }
+
+            .sidebar a {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+                margin-bottom: 0;
+            }
+
+            .main {
+                padding: 1.5rem;
+                box-sizing: border-box;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>NEXO CORE</h2>
+        <a href="{% url 'admin_dashboard' %}">Dashboard</a>
+        <a href="{% url 'course_list' %}">Cursos</a>
+        <a href="{% url 'admin_grade_assignments' %}">Talleres</a>
+        <a class="active" href="{% url 'notifications_view' %}">Notificaciones</a>
+        <a href="{% url 'admin_login' %}">Salir</a>
+    </div>
+    <div class="main">
+        <h1>Notificaciones</h1>
+        <p class="info">Panel de notificaciones del sistema. Aquí se gestionarán las alertas y avisos de la plataforma.
+        </p>
+    </div>
+</body>
+
+</html>

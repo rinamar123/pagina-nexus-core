@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ course.title }} - IA Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Outfit:wght@400;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+        body { background: var(--dark-bg); color: white; font-family: 'Space Grotesk', sans-serif; margin: 0; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 4rem 2rem; }
+        
+        .header { text-align: center; margin-bottom: 4rem; }
+        .icon { font-size: 5rem; margin-bottom: 1rem; }
+        h1 { font-family: 'Outfit', sans-serif; font-size: 3rem; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 3rem; }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+        
+        .card { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 2rem; padding: 2.5rem; backdrop-filter: blur(20px); }
+        h2 { color: var(--neon-blue); margin-bottom: 1.5rem; font-family: 'Outfit', sans-serif; }
+        
+        .content-item { border-left: 2px solid var(--neon-purple); padding-left: 1.5rem; margin-bottom: 2rem; }
+        .content-item h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .content-item p { color: rgba(255,255,255,0.6); font-size: 0.9rem; }
+        
+        .back-btn { display: inline-block; margin-top: 2rem; color: var(--neon-blue); text-decoration: none; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="icon">{{ course.icon }}</div>
+            <h1>{{ course.title }}</h1>
+            <p style="color: rgba(255,255,255,0.5);">{{ course.get_level_display }} | {{ course.duration }}</p>
+        </div>
+
+        <div class="grid">
+            <div class="main-content">
+                <div class="card">
+                    <h2>Descripción del Algoritmo</h2>
+                    <p style="line-height: 1.8; color: rgba(255,255,255,0.8);">{{ course.description }}</p>
+                </div>
+
+                <div class="card" style="margin-top: 2rem;">
+                    <h2>Módulos del Curso (Estructura de la Red)</h2>
+                    {% for content in contents %}
+                    <div class="content-item">
+                        <h3>{{ content.title }}</h3>
+                        <p>{{ content.content|striptags|truncatewords:20|safe }}</p>
+                    </div>
+                    {% empty %}
+                    <p style="color: rgba(255,255,255,0.3);">Contenido en fase de entrenamiento...</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="card">
+                    <h2>Evaluaciones</h2>
+                    {% for exam in exams %}
+                    <div style="margin-bottom: 1rem; font-size: 0.9rem;">
+                        <span style="color: var(--neon-purple);">●</span> {{ exam.title }}
+                    </div>
+                    {% empty %}
+                    <p style="color: rgba(255,255,255,0.3);">No hay exámenes programados.</p>
+                    {% endfor %}
+                </div>
+                
+                <a href="{% url 'index' %}" class="back-btn">← Volver al Sistema</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

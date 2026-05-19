@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estadísticas Neurales | IA Academy</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2103/2103633.png">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Outfit:wght@400;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+        body { background: var(--dark-bg); color: white; font-family: 'Space Grotesk', sans-serif; margin: 0; padding: 2rem; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; }
+        h1 { font-family: 'Outfit', sans-serif; font-size: 2.5rem; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+        .stat-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 2rem; padding: 2rem; backdrop-filter: blur(10px); }
+        
+        .grade-display { text-align: center; margin: 2rem 0; }
+        .grade-val { font-size: 4rem; font-weight: 800; color: var(--neon-blue); font-family: 'Outfit'; }
+        .grade-max { font-size: 1.5rem; color: rgba(255,255,255,0.3); }
+        
+        .passing-info { font-size: 0.8rem; text-align: center; color: rgba(255,255,255,0.5); border-top: 1px solid var(--glass-border); padding-top: 1rem; }
+        
+        .chart-container { margin-top: 2rem; height: 300px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Análisis de Rendimiento <span>{{ student.name|upper }}</span></h1>
+            <a href="{% url 'student_dashboard' %}" style="color: var(--neon-blue); text-decoration: none; font-weight: 700;">VOLVER AL DASHBOARD</a>
+        </div>
+
+        {% if messages %}
+        <div style="margin-bottom: 2rem;">
+            {% for message in messages %}
+            <div style="padding: 1rem; border-radius: 1rem; margin-bottom: 1rem; font-size: 0.85rem; font-weight: bold; 
+                {% if message.tags == 'success' %}
+                    background: rgba(0, 255, 128, 0.1); border: 1px solid #00ff80; color: #00ff80;
+                {% elif message.tags == 'error' %}
+                    background: rgba(255, 77, 77, 0.1); border: 1px solid #ff4d4d; color: #ff4d4d;
+                {% else %}
+                    background: rgba(0, 242, 255, 0.1); border: 1px solid var(--neon-blue); color: var(--neon-blue);
+                {% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="stats-grid">
+            {% for stat in course_stats %}
+            <div class="stat-card">
+                <h3 style="color: var(--neon-purple); margin-bottom: 1rem;">{{ stat.course.title }}</h3>
+                <div class="grade-display">
+                    <span class="grade-val">{{ stat.avg_grade }}</span>
+                    <span class="grade-max">/ 5.0</span>
+                </div>
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    {% if stat.avg_grade >= 3.0 %}
+                        <span style="background: rgba(0, 255, 128, 0.1); color: #00ff80; padding: 0.5rem 1rem; border-radius: 2rem; font-weight: 800; font-size: 0.8rem;">APROBADO</span>
+                    {% else %}
+                        <span style="background: rgba(255, 77, 77, 0.1); color: #ff4d4d; padding: 0.5rem 1rem; border-radius: 2rem; font-weight: 800; font-size: 0.8rem;">EN RIESGO</span>
+                    {% endif %}
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="chart-{{ stat.course.id }}"></canvas>
+                </div>
+
+                <div class="passing-info">
+                    Mínimo para aprobar: 3.0 | Máximo: 5.0
+                </div>
+
+                <!-- DIPLOMA CONTROL SECTION -->
+                <div style="margin-top: 1.5rem; text-align: center; border-top: 1px solid var(--glass-border); padding-top: 1.5rem;">
+                    <h4 style="font-family: 'Outfit'; font-size: 0.9rem; color: white; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.8rem;">DIPLOMA DE LOGRO</h4>
+                    {% if stat.diploma_status == 'eligible' %}
+                        <form method="POST" action="{% url 'student_request_diploma' stat.course.id %}">
+                            {% csrf_token %}
+                            <button type="submit" style="background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); border: none; color: white; padding: 0.6rem 1.5rem; border-radius: 1rem; font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: 0.3s; width: 100%; text-transform: uppercase; letter-spacing: 1px;">
+                                Solicitar Diploma
+                            </button>
+                        </form>
+                    {% elif stat.diploma_status == 'pending' %}
+                        <div style="background: rgba(255, 189, 46, 0.1); border: 1px solid #ffbd2e; color: #ffbd2e; padding: 0.6rem; border-radius: 1rem; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">
+                            En revisión por Admin
+                        </div>
+                    {% elif stat.diploma_status == 'approved' %}
+                        <a href="{% url 'student_diploma' stat.course.id %}" target="_blank" style="background: #00ff80; border: none; color: var(--dark-bg); padding: 0.6rem 1.5rem; border-radius: 1rem; font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: 0.3s; display: block; text-decoration: none; text-align: center; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 15px rgba(0, 255, 128, 0.3);">
+                            Descargar Diploma
+                        </a>
+                    {% else %}
+                        <div style="background: rgba(255,255,255,0.02); border: 1px dashed var(--glass-border); color: rgba(255,255,255,0.3); padding: 0.6rem; border-radius: 1rem; font-size: 0.75rem; line-height: 1.3;">
+                            Bloqueado (Progreso: {{ stat.progress }}% | Examen: {% if stat.exam_grade %}{{ stat.exam_grade }}{% else %}N/A{% endif %})
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p>No hay datos de rendimiento disponibles.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+    {% for stat in course_stats %}
+    new Chart(document.getElementById('chart-{{ stat.course.id }}'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Completado', 'Pendiente'],
+            datasets: [{
+                data: [{{ stat.progress }}, {{ stat.pending }}],
+                backgroundColor: ['#00f2ff', 'rgba(255,255,255,0.05)'],
+                borderColor: 'transparent'
+            }]
+        },
+        options: {
+            cutout: '80%',
+            plugins: { legend: { display: false } }
+        }
+    });
+    {% endfor %}
+    </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>EVALUACIÓN NEURAL | IA Academy</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2103/2103633.png">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Outfit:wght@400;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+        body { background: var(--dark-bg); color: white; font-family: 'Space Grotesk', sans-serif; margin: 0; padding: 2rem; overflow-x: hidden; }
+        .container { max-width: 800px; margin: 0 auto; }
+        
+        .exam-header { text-align: center; margin-bottom: 4rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 2rem; }
+        h1 { font-family: 'Outfit', sans-serif; font-size: 3rem; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; }
+        
+        .question-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 2rem; padding: 3rem; margin-bottom: 2rem; position: relative; }
+        .question-num { position: absolute; top: -1rem; left: 2rem; background: var(--neon-blue); color: var(--dark-bg); padding: 0.2rem 1.5rem; border-radius: 2rem; font-weight: 800; font-size: 0.8rem; }
+        
+        .option-label { display: block; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 1rem; margin-bottom: 1rem; cursor: pointer; transition: 0.3s; position: relative; }
+        .option-label:hover { border-color: var(--neon-blue); background: rgba(0, 242, 255, 0.05); transform: translateX(10px); }
+        
+        input[type="radio"] { display: none; }
+        input[type="radio"]:checked + .option-label { border-color: var(--neon-purple); background: rgba(188, 19, 254, 0.1); box-shadow: 0 0 20px rgba(188, 19, 254, 0.2); }
+        
+        .btn-submit { width: 100%; padding: 1.5rem; border: none; border-radius: 1.5rem; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); color: white; font-weight: 800; font-size: 1.2rem; cursor: pointer; margin-top: 3rem; transition: 0.4s; }
+        .btn-submit:hover { transform: scale(1.02); box-shadow: 0 0 40px rgba(0, 242, 255, 0.3); }
+        
+        .timer { position: fixed; top: 2rem; right: 2rem; background: rgba(255, 77, 77, 0.1); border: 1px solid #ff4d4d; color: #ff4d4d; padding: 1rem 2rem; border-radius: 2rem; font-weight: 800; }
+    </style>
+</head>
+<body>
+    <div class="timer" id="timer">INICIANDO PROTOCOLO...</div>
+
+    <div class="container">
+        <div class="exam-header">
+            <h1>EXAMEN FINAL</h1>
+            <p style="color: var(--neon-blue); letter-spacing: 5px;">{{ course.title|upper }}</p>
+        </div>
+
+        <form method="POST" action="{% url 'take_exam' course.pk %}" id="examForm">
+            {% csrf_token %}
+            {% for question in exam.questions.all %}
+            <div class="question-card">
+                <span class="question-num">MODULO {{ forloop.counter }}</span>
+                <h3 style="margin-bottom: 2rem; line-height: 1.4;">{{ question.text }}</h3>
+                
+                <div class="options">
+                    {% for option in question.options.all %}
+                    <input type="radio" name="q_{{ question.id }}" id="opt_{{ option.id }}" value="{{ option.id }}" required>
+                    <label for="opt_{{ option.id }}" class="option-label">
+                        {{ option.text }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn-submit">SINCRONIZAR RESPUESTAS</button>
+        </form>
+    </div>
+
+    <script>
+        let timeLeft = {{ exam.time_limit_minutes }} * 60;
+        const timerElement = document.getElementById('timer');
+
+        const countdown = setInterval(() => {
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                document.getElementById('examForm').submit();
+            } else {
+                let mins = Math.floor(timeLeft / 60);
+                let secs = timeLeft % 60;
+                timerElement.textContent = `TIEMPO RESTANTE: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                timeLeft--;
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
