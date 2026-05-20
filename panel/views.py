@@ -113,14 +113,16 @@ def enrollment_accept(request, pk):
     student = enroll_req.student
     course = enroll_req.course
     
+    temp_password = generate_random_password()
+
     if not student.user:
-        temp_password = generate_random_password()
         username = student.email.split('@')[0]
         user, created = User.objects.get_or_create(username=username, email=student.email)
         user.set_password(temp_password)
         user.save()
         student.user = user
-        student.generated_password = temp_password
+
+    student.generated_password = temp_password
         
     student.status = 'accepted'
     student.courses.add(course)
