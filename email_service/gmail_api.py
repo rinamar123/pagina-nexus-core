@@ -90,14 +90,18 @@ def get_gmail_service():
     return build('gmail', 'v1', credentials=creds)
 
 
-def send_gmail_api_message(to, subject, body):
+def send_gmail_api_message(to, subject, body, html=None):
     """
     Envía un correo usando la Gmail API.
+    Si se proporciona html, envía un correo con formato HTML.
     Retorna True si se envió correctamente, False en caso contrario.
     """
     try:
         service = get_gmail_service()
-        message = MIMEText(body, _charset='utf-8')
+        if html:
+            message = MIMEText(html, 'html', _charset='utf-8')
+        else:
+            message = MIMEText(body, _charset='utf-8')
         message['to'] = to
         message['subject'] = subject
 
