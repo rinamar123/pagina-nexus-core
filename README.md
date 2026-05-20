@@ -8,13 +8,23 @@ El workspace contiene el directorio principal de desarrollo **`Laboratorio_RinaM
 
 ## 👤 Usuarios de Prueba
 
-| Rol | Usuario | Contraseña |
-|-----|---------|------------|
-| Administrador | `admin` | `admin123` |
-| Estudiante | `andres01032001` | `Iacademy2026*` |
+### Administradores
 
-> Si el administrador no funciona, ejecuta `python scripts/reset_admin.py` para restablecer la contraseña a `admin123`.  
-> La contraseña del estudiante es la generada automáticamente al aceptar su solicitud de inscripción.
+| Usuario | Contraseña | Notas |
+|---------|------------|-------|
+| `admin` | `admin123` | Acceso total al panel `/panel/login/` |
+| `profesor` | `Profesor2026*` | Acceso total al panel `/panel/login/` |
+
+### Estudiantes
+
+| Usuario | Contraseña | Nombre | Estado |
+|---------|------------|--------|--------|
+| `andres01032001` | `Iacademy2026*` | Andres | Aceptado |
+| `ana.garcia` | `Ana2026*` | Ana García | Aceptado |
+| `maria.rodriguez` | `Maria2026*` | María Rodríguez | Aceptado |
+| `carlos.lopez` | `Carlos2026*` | Carlos López | Pendiente |
+
+> Para restablecer el admin: `python scripts/reset_admin.py`
 
 ---
 
