@@ -116,3 +116,29 @@ GMAIL_API_TOKEN_FILE = BASE_DIR / 'token.json'
 GMAIL_API_SCOPES = ['https://www.googleapis.com/auth/gmail.send']
 
 SITE_URL = os.environ.get('SITE_URL', 'https://learn-hub-bhxvd.ondigitalocean.app')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    },
+}
