@@ -115,7 +115,7 @@ GMAIL_API_CREDENTIALS_FILE = BASE_DIR / 'client_secret_620518173132-qtioo9hdcvl5
 GMAIL_API_TOKEN_FILE = BASE_DIR / 'token.json'
 GMAIL_API_SCOPES = ['https://www.googleapis.com/auth/gmail.send']
 
-SITE_URL = os.environ.get('SITE_URL', 'https://learn-hub-bhxvd.ondigitalocean.app')
+SITE_URL = os.environ.get('SITE_URL', 'https://lionfish-app-9h5bg.ondigitalocean.app')
 
 LOGGING = {
     'version': 1,
