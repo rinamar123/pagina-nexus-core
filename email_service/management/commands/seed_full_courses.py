@@ -3,6 +3,19 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from enrollment.models import Course, CourseContent, Exam, Question, QuestionOption, InteractiveChallenge, CourseFile
 
+LEVEL_PREFIXES = {
+    'principiante': '[BASICO] ',
+    'intermedio': '[INTERMEDIO] ',
+    'avanzado': '[AVANZADO] ',
+}
+
+SECTION_TYPE_MAP = {
+    'explicacion': 'explicacion',
+    'ejemplo': 'ejemplo',
+    'taller': 'demo',
+    'demo': 'demo',
+}
+
 
 COURSES_DATA = [
     {
@@ -532,8 +545,11 @@ class Command(BaseCommand):
             course, created = Course.objects.update_or_create(id=course_id, defaults=data)
             self.stdout.write(f'  Curso: {course.title} {"(creado)" if created else "(actualizado)"}')
 
+            prefix = LEVEL_PREFIXES.get(course.level, '[BASICO] ')
             CourseContent.objects.filter(course=course).delete()
             for les in lessons:
+                les['title'] = prefix + les['title']
+                les['section_type'] = SECTION_TYPE_MAP.get(les['section_type'], les['section_type'])
                 CourseContent.objects.create(course=course, **les)
             self.stdout.write(f'    → {len(lessons)} lecciones creadas')
 
