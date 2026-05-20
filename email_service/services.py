@@ -104,10 +104,11 @@ Ingresa aquí: {LOGIN_URL}
 
 def send_enrollment_rejected_email(student, course=None):
     subject = 'Actualización de Estado — Nexus Core IA Academy'
-    course_text = f' al curso <strong>{course.title}</strong>' if course else ''
+    course_plain = f' al curso {course.title}' if course else ''
+    course_html = f' al curso <strong>{course.title}</strong>' if course else ''
     plain = f"""Hola {student.name},
 
-Tu solicitud de inscripción{course_text} ha sido revisada y no pudo ser aprobada en esta ocasión.
+Tu solicitud de inscripción{course_plain} ha sido revisada y no pudo ser aprobada en esta ocasión.
 
 Si tienes dudas, contacta al administrador del sistema.
 
@@ -115,7 +116,7 @@ Si tienes dudas, contacta al administrador del sistema.
     html = _build_content(
         'Solicitud Revisada',
         [f'Hola <strong>{student.name}</strong>,',
-         f'Tu solicitud de inscripción{course_text} ha sido revisada y no pudo ser aprobada en esta ocasión.',
+         f'Tu solicitud de inscripción{course_html} ha sido revisada y no pudo ser aprobada en esta ocasión.',
          'Si consideras que esto es un error, por favor ponte en contacto con el administrador del sistema.']
     )
     return _send_email(subject, plain, student.email, html_body=html)
