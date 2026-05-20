@@ -6,6 +6,18 @@ El workspace contiene el directorio principal de desarrollo **`Laboratorio_RinaM
 
 ---
 
+## 👤 Usuarios de Prueba
+
+| Rol | Usuario | Contraseña |
+|-----|---------|------------|
+| Administrador | `admin` | `admin123` |
+| Estudiante | `andres01032001` | `Iacademy2026*` |
+
+> Si el administrador no funciona, ejecuta `python scripts/reset_admin.py` para restablecer la contraseña a `admin123`.  
+> La contraseña del estudiante es la generada automáticamente al aceptar su solicitud de inscripción.
+
+---
+
 ## 🚀 Características Implementadas y Mejoras Agregadas
 
 Hemos evolucionado el proyecto original añadiendo una capa de interactividad premium, optimizando la experiencia de usuario y garantizando la robustez del sistema:
