@@ -24,7 +24,8 @@ El workspace contiene el directorio principal de desarrollo **`Laboratorio_RinaM
 | `maria.rodriguez` | `Maria2026*` | María Rodríguez | Aceptado |
 | `carlos.lopez` | `Carlos2026*` | Carlos López | Pendiente |
 
-> Para restablecer el admin: `python scripts/reset_admin.py`
+> Para crear o restablecer estos usuarios en cualquier entorno (local o producción):  
+> `python manage.py seed_test_users`
 
 ---
 
