@@ -283,11 +283,16 @@ if settings.DEBUG:
   * **Visibilidad de Retroalimentación:** Dentro de la lección del curso (`curso.html`), el estudiante ve su calificación final y una caja de cristal esmerilado con la retroalimentación textual provista por el docente.
 
 #### 3.4 App `email_service` (Transmisor Automatizado)
-* Posee la capacidad de enrutar los envíos tanto por SMTP convencional como por la robusta API REST de Gmail utilizando credenciales de OAuth2 en formato JSON.
-* Envía correos electrónicos para:
-  1. Credenciales de bienvenida tras la aceptación.
-  2. Notificación en caso de rechazo del registro.
-  3. Alerta de seguridad inmediata tras una actualización de contraseña en el portal.
+* Envía correos electrónicos en formato **HTML profesional** con diseño responsive y botones CTA.
+* Soporta dos canales de envío:
+  * **Gmail API REST** (prioritario) usando OAuth2 con credenciales desde archivo o variables de entorno (`GMAIL_API_TOKEN_JSON`, `GMAIL_API_CLIENT_SECRET_JSON`).
+  * **SMTP convencional** como respaldo automático si la API falla.
+* Las credenciales OAuth2 se cargan desde archivos locales o desde variables de entorno en base64 (ideal para producción).
+* Envía correos para:
+   1. Credenciales de bienvenida tras la aceptación (con usuario y contraseña).
+   2. Notificación en caso de rechazo del registro.
+   3. Alerta de seguridad tras actualización de contraseña.
+   4. Recuperación de contraseña (password reset).
 
 ---
 
@@ -343,11 +348,19 @@ python manage.py runserver
 
 El servidor estará disponible en la dirección: **`http://127.0.0.1:8000/`**
 
-#### Direcciones del Ecosistema:
-* **Landing Page principal e Inscripción:** `http://127.0.0.1:8000/`
-* **Portal de Estudiantes (Dashboard & Login):** `http://127.0.0.1:8000/estudiantes/login/`
-* **Panel Administrativo Interno:** `http://127.0.0.1:8000/panel/login/`
-* **Django Admin Convencional:** `http://127.0.0.1:8000/admin/`
+#### Usuarios de Prueba:
+```bash
+python manage.py seed_test_users
+```
+
+#### Direcciones del Ecosistema (Local):
+* **Landing Page e Inscripción:** `http://127.0.0.1:8000/`
+* **Portal de Estudiantes:** `http://127.0.0.1:8000/estudiantes/login/`
+* **Panel Administrativo:** `http://127.0.0.1:8000/panel/login/`
+* **Django Admin:** `http://127.0.0.1:8000/admin/`
+
+#### Dirección en Producción:
+* **`https://lionfish-app-9h5bg.ondigitalocean.app/`**
 
 ---
 
@@ -361,9 +374,20 @@ Si deseas utilizar el canal de la API REST de Gmail en lugar de SMTP convenciona
 4. Dirígete a la sección de **Pantalla de Consentimiento de OAuth** (OAuth Consent Screen), configura el tipo de usuario como Externo, agrega tu correo electrónico de prueba y añade los alcances (scopes) necesarios, específicamente:
    * `https://www.googleapis.com/auth/gmail.send`
 5. Crea credenciales tipo **ID de cliente de OAuth** (OAuth Client ID) para una aplicación de escritorio.
-6. Descarga las credenciales en formato JSON y guárdalas con el nombre de `client_secret.json` en la raíz de `Laboratorio_RinaMarriaga`.
-7. En `ai_project/settings.py`, asegúrate de cambiar `GMAIL_API_ENABLED = True`.
-8. La primera vez que el sistema intente enviar un correo (por ejemplo, al aceptar un estudiante), se abrirá una ventana automática en tu navegador para realizar la autenticación de OAuth. Al conceder los permisos, se generará de manera segura el archivo de token `token.json` en la raíz del proyecto para realizar los envíos de manera 100% automatizada en el futuro.
+6. Descarga las credenciales en formato JSON y guárdalas como `client_secret_*.json` en la raíz del proyecto.
+7. En `ai_project/settings.py`, asegúrate de que `GMAIL_API_ENABLED = True`.
+8. Genera el token ejecutando `python manage.py shell` y llamando a `get_gmail_service()`. Se abrirá un flujo de autorización por consola (sin navegador).
+
+### Variables de Entorno para Producción
+
+En servidores headless (DigitalOcean), las credenciales se pueden pasar como variables de entorno:
+
+| Variable | Descripción |
+|----------|-------------|
+| `GMAIL_API_TOKEN_JSON` | Contenido de `token.json` codificado en base64 |
+| `GMAIL_API_CLIENT_SECRET_JSON` | Contenido de `client_secret_*.json` codificado en base64 |
+
+Si estas variables existen, el sistema las usará automáticamente sin necesidad de archivos locales.
 
 ---
 
